@@ -51,6 +51,7 @@ function zoom_supports($feature) {
         case FEATURE_GROUPMEMBERSONLY:
         case FEATURE_MOD_INTRO:
         case FEATURE_SHOW_DESCRIPTION:
+        case FEATURE_COMPLETION_HAS_RULES:
             return true;
         default:
             return null;
@@ -1276,4 +1277,131 @@ function zoom_get_instance_breakout_rooms($zoomid) {
     }
 
     return $breakoutrooms;
+}
+
+function zoommeeting_view($zoom, $course, $cm, $context) {
+
+    // Trigger course_module_viewed event.
+    $event = \mod_zoom\event\course_module_viewed::create(array(
+        'objectid' => $cm,
+        'context' => $context,
+    ));
+
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('zoom', $zoom);
+    $event->trigger();
+
+
+//
+//    $params = array(
+//        'context' => $context,
+//        'objectid' => $zoom->id
+//    );
+//
+//    $event = \mod_zoom\event\course_module_viewed::create($params);
+//    $event->add_record_snapshot('course_modules', $cm);
+//    $event->add_record_snapshot('course', $course);
+//    $event->add_record_snapshot('zoom', $zoom);
+//    $event->trigger();
+//
+//    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
+
+/**
+ * @param $course
+ * @param $cm
+ * @param $userid
+ * @param $type
+ */
+function zoom_get_completion_state($course, $cm, $userid, $type) {
+    $completionStatus = checkZoomMeetingCompletionStatus($cm, $userid);
+    return $type && $completionStatus;
+}
+
+function zoom_get_coursemodule_info($coursemodule) {
+    global $DB;
+
+    $dbparams = ['id' => $coursemodule->instance];
+    $fields = '*';
+    if (!$zoom = $DB->get_record('zoom', $dbparams, $fields)) {
+        return false;
+    }
+
+    $result = new cached_cm_info();
+    $result->name = $zoom->name;
+
+    if ($coursemodule->showdescription) {
+        // Convert intro to html. Do not filter cached version, filters run at display time.
+        $result->content = format_module_intro('zoom', $zoom, $coursemodule->id, false);
+    }
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $result->customdata['customcompletionrules']['active_meeting_percentage'] = $zoom->active_meeting_percentage;
+        $result->customdata['customcompletionrules']['allowzoomcompletion'] = $zoom->allowzoomcompletion;
+    }
+
+    return $result;
+}
+
+/**
+ * @param $cm
+ * @param $userid
+ * @return bool
+ * @throws dml_exception
+ */
+function checkZoomMeetingCompletionStatus($cm, $userid) {
+
+    $cmid = $cm->id;
+
+    global $DB, $CFG;
+
+    $zoomMeta = $DB->get_record('zoom', array('id' => $cm->instance));
+    $zoomDetail = $DB->get_record('zoom_meeting_details', array('zoomid' => $cm->instance));
+
+    $cm->active_meeting_percentage = $zoomMeta->active_meeting_percentage;
+    $cm->allowzoomcompletion = $zoomMeta->allowzoomcompletion;
+
+
+    if ($zoomMeta->allowzoomcompletion) {
+
+        $totalMinutes = $zoomMeta->duration;
+
+        $sql = "SELECT
+	sum( p.duration ) AS totalduration 
+FROM
+	mdl_zoom_meeting_participants p 
+
+	LEFT JOIN mdl_zoom_meeting_details d ON p.detailsid = d.id
+	LEFT JOIN mdl_zoom z ON d.zoomid = z.id 
+WHERE
+	z.id = {$cm->instance} and userid = {$userid}
+GROUP BY
+	z.id";
+
+        $record = $DB->get_record_sql($sql);
+        $activeMinutes = $record->totalduration;
+
+
+        if ($cm->active_meeting_percentage <= 0 || $totalMinutes <= 0) {
+            return false;
+        }
+
+        $activePercentage = $activeMinutes * 100 / (double)$totalMinutes;
+        $threshold = (double)$cm->active_meeting_percentage;
+
+
+        if ($activePercentage >= $threshold) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        $result = true;
+    }
+
+    return $result;
 }

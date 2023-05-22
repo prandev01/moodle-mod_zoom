@@ -231,7 +231,7 @@ if (!$showrecreate) {
     if ($available) {
         // Show join meeting button.
         if ($userishost) {
-            $buttonhtml = html_writer::tag('button', $strstart, ['type' => 'submit', 'class' => 'btn btn-success']);
+            $buttonhtml = html_writer::tag('button', $strstart, array('type' => 'submit', 'class' => 'btn btn-success', 'id'=>'startMeetingButton'));
         } else {
             $btntext = $strjoin;
             // If user is not already registered, use register text.
@@ -239,7 +239,7 @@ if (!$showrecreate) {
                 $btntext = $strregister;
             }
 
-            $buttonhtml = html_writer::tag('button', $btntext, ['type' => 'submit', 'class' => 'btn btn-primary']);
+            $buttonhtml = html_writer::tag('button', $btntext, ['type' => 'submit', 'class' => 'btn btn-primary', 'id'=>'startMeetingButton']);
         }
 
         $aurl = new moodle_url('/mod/zoom/loadmeeting.php', ['id' => $cm->id]);
@@ -496,6 +496,33 @@ if ($zoom->show_media) {
     echo html_writer::table($table);
 }
 
+
+$strCompletionAllowed = get_string('completion_allowed_label', 'mod_zoom');
+$strActivePercentage = get_string('active_percentage', 'mod_zoom');
+
+if ($zoom->allowzoomcompletion) {
+    $completionAllowed = get_string("completion_enabled", 'mod_zoom');
+} else {
+    $completionAllowed = get_string("completion_disabled", 'mod_zoom');
+}
+$table->data[] = array($strCompletionAllowed, html_writer::div($completionAllowed));
+$table->data[] = array($strActivePercentage, html_writer::div($zoom->active_meeting_percentage.' %'));
+
+
+if(multics::has_capability('moodle/site:config', context_system::instance())) {
+    $detailsreport = get_string('detailed_report', 'mod_zoom');
+    $showdetailedreport = get_string('show_detailed_report', 'mod_zoom');
+//    $detailsreport = str_replace("\r\n", '<br/>', $detailsreport);
+
+    $showbutton = new moodle_url('/local/report_zoom/index.php?type=1', array('id' => $cm->id));
+
+    $showbutton = "<a href=\"{$showbutton}\" style='color: #62a8eb;'>{$showdetailedreport}</a>";
+    $detailReportPart = html_writer::div($detailsreport, '',
+        array('id' => 'show-more-body', 'style' => 'display: none;'));
+    $table->data[] = array($detailsreport, html_writer::div($showbutton . $detailReportPart, ''));
+}
+
+
 // Supplementary feature: All meetings link.
 // Only show if the admin did not disable this feature completely.
 if ($config->showallmeetings != ZOOM_ALLMEETINGS_DISABLE) {
@@ -508,3 +535,50 @@ if ($config->showallmeetings != ZOOM_ALLMEETINGS_DISABLE) {
 
 // Finish the page.
 echo $OUTPUT->footer();
+
+
+global $USER;
+//print_r($USER->email);
+
+$emailAddress = $USER->email;
+
+//if ($available) {
+$javscriptCode = "
+<script type=\"text/javascript\">
+
+function meetingInviteToggle(){ 
+
+var button = document.getElementById(\"show-more-button\");
+  var body = document.getElementById(\"show-more-body\");
+    
+    if (!button || !body) {
+        setTimeout(meetingInviteToggle, 300);   
+        return;
+    }
+    
+  button . addEventListener(\"click\", function()  {
+    if (body . style . display == \"\") {
+        body . style . display = \"none\";
+
+    } else {
+        body . style . display = \"\";
+    }
+  });
+   
+}
+
+setTimeout(
+meetingInviteToggle
+, 300);
+
+
+document.getElementById(\"startMeetingButton\").onclick = function(event) {
+  alert(\"Important!Your current zoom login user is {$emailAddress}. Please ensure you’re using the HA email Zoom account in your device . \\nOr\\n just log out your Zoom account in your device so that the system will use eLC+a / c to join the meeting / webinar . Otherwise, system would not capture your attendance records . \");
+//  event.preventDefault();
+}
+</script>
+";
+
+echo $javscriptCode;
+
+//}

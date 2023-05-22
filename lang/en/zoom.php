@@ -231,7 +231,7 @@ $string['option_allow_recording_change'] = 'Allow change recording';
 $string['option_allow_recording_change_help'] = 'Allow the user to change recording setup at activity creation time';
 $string['option_audio'] = 'Audio options';
 $string['option_audio_help'] = 'With this option, you can allow users to call in using Telephone only, Computer audio only or both';
-$string['option_authenticated_users'] = 'Require authentication to join';
+$string['option_authenticated_users'] = 'Require authentication to join (ha.org.hk)';
 $string['option_authenticated_users_help'] = "Enabling this option requires all attendees to sign in with their authorized zoom account to be able to join the meeting. It does <em>not</em> relate to logging into Moodle in any way.";
 $string['option_auto_recording'] = 'Automatic recording';
 $string['option_auto_recording_help'] = 'Enabling this option will automatically record the meeting';
@@ -413,3 +413,12 @@ $string['zoom:refreshsessions'] = 'Refresh Zoom meeting reports';
 $string['zoom:view'] = 'View Zoom meetings';
 $string['zoom:viewdialin'] = 'View Zoom dial-in information';
 $string['zoom:viewjoinurl'] = 'View Zoom join url';
+
+$string['detailed_report'] = "Detailed Report";
+$string['show_detailed_report'] = "Show Detailed Report";
+
+$string['completion_allowed_label'] = "Completion Allowed";
+$string['active_percentage'] = "Completion Percentage";
+$string['completion_enabled'] = "Enabled";
+$string['completion_disabled'] = "Disabled";
+

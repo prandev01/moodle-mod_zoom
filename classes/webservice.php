@@ -420,6 +420,34 @@ class mod_zoom_webservice {
         return true;
     }
 
+    public function create_user($user) {
+        $url = 'users';
+        $data = array('action' => 'autoCreate');
+        $data['user_info'] = array(
+            'email' => $user->email,
+            'type' => ZOOM_USER_TYPE_BASIC,
+            'first_name' => $user->firstname,
+            'last_name' => $user->lastname,
+            'password' => 'xzM0M7SEihef0HA+/l3few=='
+        );
+
+        try {
+            $this->_make_call($url, $data, 'post');
+        } catch (moodle_exception $error) {
+            // If the user already exists, the error will contain 'User already in the account'.
+
+            return false;
+//            print_r($error->getMessage()); exit;
+//            if (strpos($error->getMessage(), 'User already in the account') === true) {
+//                return false;
+//            } else {
+//                throw $error;
+//            }
+        }
+
+        return true;
+    }
+
     /**
      * Get users list.
      *
@@ -630,6 +658,33 @@ class mod_zoom_webservice {
         if (isset($zoom->registration)) {
             $data['settings']['approval_type'] = $zoom->registration;
         }
+
+        /*************************************
+         *  *** Needs to Clarify ****
+        $courseContext = context_course::instance($zoom->course, MUST_EXIST);
+        $users = get_enrolled_users($courseContext);
+        $userList = [];
+//        foreach($users as $user) {
+//            $userList[] = array('email' => $user->email);
+//            $this->create_user($user);
+//        }
+
+        $jimmyUser = (object) array(
+            'firstname' => 'Jimmy',
+            'lastname' => 'Wong',
+            'email' => 'info@cogitosolutions.com'
+        );
+
+        $this->create_user($jimmyUser);
+        $userList[] = array('email' => 'jimhtwong@hotmail.com');
+
+        $userList = json_encode($userList);
+
+//        $data['settings']['authentication_domains'] = 'ha.org.hk';
+        $data['settings']['meeting_authentication'] = true;
+//        $data['settings']['meeting_invitees'] = $userList;
+
+        */
 
         if (!empty($zoom->webinar)) {
             if ($zoom->recurring) {

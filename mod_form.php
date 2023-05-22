@@ -903,6 +903,42 @@ class mod_zoom_mod_form extends moodleform_mod {
         }
     }
 
+    public function add_completion_rules() {
+        $mform = $this->_form;
+        $mform->addElement('checkbox', 'allowzoomcompletion', get_string('allowzoomcompletion', 'completion'),
+            get_string('allowzoomcompletion_description', 'completion'));
+        $mform->disabledIf('allowzoomcompletion', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
+        $mform->addHelpButton('allowzoomcompletion', 'aallowzoomcompletion', 'completion');
+
+        $mform->addElement('text', 'active_meeting_percentage', get_string('active_meeting_percentage', 'completion'), 'maxlength="3" size="3"');
+//                $mform->setDefault('middleinterval', 100);
+        $mform->setType('active_meeting_percentage', PARAM_INT);
+        $mform->disabledIf('active_meeting_percentage', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
+        $mform->disabledIf('active_meeting_percentage', 'allowzoomcompletion', 'notchecked');
+        $mform->addHelpButton('active_meeting_percentage', 'active_meeting_percentage', 'completion');
+
+        return ['active_meeting_percentage', 'allowzoomcompletion'];
+    }
+
+    public function completion_rule_enabled($data) {
+        return (!empty($data['allowzoomcompletion']) && $data['active_meeting_percentage'] != 0);
+    }
+
+    function get_data() {
+        $data = parent::get_data();
+        if (!$data) {
+            return $data;
+        }
+        if (!empty($data->completionunlocked)) {
+            // Turn off completion settings if the checkboxes aren't ticked
+            $autocompletion = !empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->allowzoomcompletion) || !$autocompletion) {
+                $data->active_meeting_percentage = 0;
+            }
+        }
+        return $data;
+    }
+
     /**
      * More validation on form data.
      * See documentation in lib/formslib.php.

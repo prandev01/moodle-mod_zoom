@@ -51,6 +51,8 @@
         <FIELD NAME="show_media" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Show Media heading in activity page" />
         <FIELD NAME="option_auto_recording" TYPE="char" LENGTH="5" NOTNULL="true" DEFAULT="none" SEQUENCE="false" COMMENT="Auto record meeting." />
         <FIELD NAME="registration" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="2" SEQUENCE="false" COMMENT="Force participants to register for the meeting/webinar" />
+        <FIELD NAME="allowzoomcompletion" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Allow/Disallow ZOOM activity percentage completion"/>
+        <FIELD NAME="active_meeting_percentage" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Percentage of ZOOM activity progress"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

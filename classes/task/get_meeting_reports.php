@@ -75,6 +75,14 @@ class get_meeting_reports extends \core\task\scheduled_task {
      * @param array $hostuuids      If passed, will find only meetings for given array of host uuids.
      */
     public function execute($paramstart = null, $paramend = null, $hostuuids = null) {
+        if (!$paramstart) {
+            $paramstart = date('Y-m-d',strtotime("-1 days"));
+
+        }
+        if (!$paramend) {
+            $paramend = date('Y-m-d', strtotime("1 days"));
+        }
+
         try {
             $this->service = zoom_webservice();
         } catch (\moodle_exception $exception) {
@@ -104,14 +112,14 @@ class get_meeting_reports extends \core\task\scheduled_task {
         if (!empty($paramend)) {
             $end = $paramend;
         } else {
-            $endtime = time();
-            $end = gmdate('Y-m-d', $endtime) . 'T' . gmdate('H:i:s', $endtime) . 'Z';
+            $endtime = strtotime('tomorrow 23:59');
+            $end = gmdate('Y-m-d', $endtime); // . 'T' . gmdate('H:i:s', $endtime) . 'Z';
         }
 
         if (!empty($paramstart)) {
             $start = $paramstart;
         } else {
-            $start = gmdate('Y-m-d', $starttime) . 'T' . gmdate('H:i:s', $starttime) . 'Z';
+            $start = gmdate('Y-m-d', $starttime);// . 'T' . gmdate('H:i:s', $starttime) . 'Z';
         }
 
         // If running as a task, then record when we last left off if
@@ -224,20 +232,20 @@ class get_meeting_reports extends \core\task\scheduled_task {
                     array_search(strtoupper($participant->user_email), $emails))) {
                 // Found email from list of enrolled users.
                 $name = $names[$moodleuserid];
-            } else if (!empty($participant->name) && ($moodleuserid =
-                    array_search(strtoupper($participant->name), $names))) {
-                // Found name from list of enrolled users.
-                $name = $names[$moodleuserid];
-            } else if (!empty($participant->user_email) &&
-                    ($moodleuser = $DB->get_record('user',
-                            ['email' => $participant->user_email, 'deleted' => 0, 'suspended' => 0], '*', IGNORE_MULTIPLE))) {
-                // This is the case where someone attends the meeting, but is not enrolled in the class.
-                $moodleuserid = $moodleuser->id;
-                $name = strtoupper(fullname($moodleuser));
-            } else if (!empty($participant->name) && ($moodleuserid =
-                    $this->match_name($participant->name, $names))) {
-                // Found name by using fuzzy text search.
-                $name = $names[$moodleuserid];
+//            } else if (!empty($participant->name) && ($moodleuserid =
+//                    array_search(strtoupper($participant->name), $names))) {
+//                // Found name from list of enrolled users.
+//                $name = $names[$moodleuserid];
+//            } else if (!empty($participant->user_email) &&
+//                    ($moodleuser = $DB->get_record('user',
+//                            ['email' => $participant->user_email, 'deleted' => 0, 'suspended' => 0], '*', IGNORE_MULTIPLE))) {
+//                // This is the case where someone attends the meeting, but is not enrolled in the class.
+//                $moodleuserid = $moodleuser->id;
+//                $name = strtoupper(fullname($moodleuser));
+//            } else if (!empty($participant->name) && ($moodleuserid =
+//                    $this->match_name($participant->name, $names))) {
+//                // Found name by using fuzzy text search.
+//                $name = $names[$moodleuserid];
             } else {
                 // Did not find any matches, so use what is given by Zoom.
                 $name = $participant->name;
@@ -463,6 +471,21 @@ class get_meeting_reports extends \core\task\scheduled_task {
         }
 
         $meeting->zoomid = $zoomrecord->id;
+
+        $timePieces = explode(':', $meeting->duration);
+
+        if (count($timePieces) == 3) {
+            $totalDuration = (int)$timePieces[0] * 3600 + (int)$timePieces[1] * 60 + (int)$timePieces[2];
+        } else if (count($timePieces) == 2) {
+            $totalDuration = (int)$timePieces[0] * 60 + (int)$timePieces[1];
+        } else if (count($timePieces) == 1) {
+            $totalDuration = (int)$timePieces[1];
+        } else {
+            $totalDuration = 0;
+        }
+
+
+        $meeting->duration = $totalDuration;
 
         // Insert or update meeting details.
         if (!($DB->record_exists('zoom_meeting_details', ['uuid' => $meeting->uuid]))) {
