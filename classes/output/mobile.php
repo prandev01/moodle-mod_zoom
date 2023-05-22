@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Mobile support for zoom.
+ * Mobile support for zoom2.
  *
- * @package     mod_zoom
+ * @package     mod_zoom2
  * @copyright   2018 Nick Stefanski <nmstefanski@gmail.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_zoom\output;
+namespace mod_zoom2\output;
 
 use context_module;
-use mod_zoom_external;
+use mod_zoom2_external;
 
 /**
- * Mobile output class for zoom
+ * Mobile output class for zoom2
  */
 class mobile {
     /**
-     * Returns the zoom course view for the mobile app,
+     * Returns the zoom2 course view for the mobile app,
      *  including meeting details and launch button (if applicable).
      * @param  array $args Arguments from tool_mobile_get_content WS
      *
@@ -43,36 +43,36 @@ class mobile {
 
         $args = (object) $args;
         $versionname = $args->appversioncode >= 3950 ? 'latest' : 'ionic3';
-        $cm = get_coursemodule_from_id('zoom', $args->cmid);
+        $cm = get_coursemodule_from_id('zoom2', $args->cmid);
 
         // Capabilities check.
         require_login($args->courseid, false, $cm, true, true);
 
         $context = context_module::instance($cm->id);
 
-        require_capability('mod/zoom:view', $context);
+        require_capability('mod/zoom2:view', $context);
         // Right now we're just implementing basic viewing, otherwise we may
         // need to check other capabilities.
-        $zoom = $DB->get_record('zoom', ['id' => $cm->instance]);
+        $zoom2 = $DB->get_record('zoom2', ['id' => $cm->instance]);
 
-        // WS to get zoom state.
+        // WS to get zoom2 state.
         try {
-            $zoomstate = mod_zoom_external::get_state($cm->id);
+            $zoom2state = mod_zoom2_external::get_state($cm->id);
         } catch (\Exception $e) {
-            $zoomstate = [];
+            $zoom2state = [];
         }
 
         // Format date and time.
-        $starttime = userdate($zoom->start_time);
-        $duration = format_time($zoom->duration);
+        $starttime = userdate($zoom2->start_time);
+        $duration = format_time($zoom2->duration);
 
         // Get audio option string.
-        $optionaudio = get_string('audio_' . $zoom->option_audio, 'mod_zoom');
+        $optionaudio = get_string('audio_' . $zoom2->option_audio, 'mod_zoom2');
 
         $data = [
-            'zoom' => $zoom,
-            'available' => $zoomstate['available'],
-            'status' => $zoomstate['status'],
+            'zoom2' => $zoom2,
+            'available' => $zoom2state['available'],
+            'status' => $zoom2state['status'],
             'start_time' => $starttime,
             'duration' => $duration,
             'option_audio' => $optionaudio,
@@ -84,11 +84,11 @@ class mobile {
             'templates' => [
                 [
                     'id' => 'main',
-                    'html' => $OUTPUT->render_from_template("mod_zoom/mobile_view_page_$versionname", $data),
+                    'html' => $OUTPUT->render_from_template("mod_zoom2/mobile_view_page_$versionname", $data),
                 ],
             ],
             'javascript' => "this.loadMeeting = function(result) { window.open(result.joinurl, '_system'); };",
-            // This JS will redirect to a joinurl passed by the mod_zoom_grade_item_update WS.
+            // This JS will redirect to a joinurl passed by the mod_zoom2_grade_item_update WS.
             'otherdata' => '',
             'files' => '',
         ];

@@ -15,17 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Cognitive depth indicator - zoom.
+ * Cognitive depth indicator - zoom2.
  *
- * @package   mod_zoom
+ * @package   mod_zoom2
  * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_zoom\analytics\indicator;
+namespace mod_zoom2\analytics\indicator;
 
 /**
- * Cognitive depth indicator - zoom.
+ * Cognitive depth indicator - zoom2.
  */
 class cognitive_depth extends activity_base {
     /**
@@ -34,7 +34,7 @@ class cognitive_depth extends activity_base {
      * @return object
      */
     public static function get_name(): \lang_string {
-        return new \lang_string('indicator:cognitivedepth', 'mod_zoom');
+        return new \lang_string('indicator:cognitivedepth', 'mod_zoom2');
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Adding, updating, and deleting zoom meeting recordings.
+ * Adding, updating, and deleting zoom2 meeting recordings.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2020 UC Regents
  * @author     2021 Jwalit Shah <jwalitshah@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,21 +27,21 @@ require(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
 require_once(__DIR__ . '/locallib.php');
 
-list($course, $cm, $zoom) = zoom_get_instance_setup();
+list($course, $cm, $zoom2) = zoom2_get_instance_setup();
 
 require_login($course, true, $cm);
 
-if (!get_config('zoom', 'viewrecordings')) {
-    throw new moodle_exception('recordingnotvisible', 'mod_zoom', get_string('recordingnotvisible', 'zoom'));
+if (!get_config('zoom2', 'viewrecordings')) {
+    throw new moodle_exception('recordingnotvisible', 'mod_zoom2', get_string('recordingnotvisible', 'zoom2'));
 }
 
 $context = context_module::instance($cm->id);
 // Set up the page.
 $params = ['id' => $cm->id];
-$url = new moodle_url('/mod/zoom/recordings.php', $params);
+$url = new moodle_url('/mod/zoom2/recordings.php', $params);
 $PAGE->set_url($url);
 
-$strname = $zoom->name;
+$strname = $zoom2->name;
 $PAGE->set_title("$course->shortname: $strname");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('incourse');
@@ -49,34 +49,34 @@ $PAGE->set_pagelayout('incourse');
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strname);
 
-$iszoommanager = has_capability('mod/zoom:addinstance', $context);
+$iszoom2manager = has_capability('mod/zoom2:addinstance', $context);
 
 // Set up html table.
 $table = new html_table();
 $table->attributes['class'] = 'generaltable mod_view';
-if ($iszoommanager) {
+if ($iszoom2manager) {
     $table->align = ['left', 'left', 'left', 'left'];
     $table->head = [
-        get_string('recordingdate', 'mod_zoom'),
-        get_string('recordinglink', 'mod_zoom'),
-        get_string('recordingpasscode', 'mod_zoom'),
-        get_string('recordingshowtoggle', 'mod_zoom')
+        get_string('recordingdate', 'mod_zoom2'),
+        get_string('recordinglink', 'mod_zoom2'),
+        get_string('recordingpasscode', 'mod_zoom2'),
+        get_string('recordingshowtoggle', 'mod_zoom2')
     ];
 } else {
     $table->align = ['left', 'left', 'left'];
     $table->head = [
-        get_string('recordingdate', 'mod_zoom'),
-        get_string('recordinglink', 'mod_zoom'),
-        get_string('recordingpasscode', 'mod_zoom')
+        get_string('recordingdate', 'mod_zoom2'),
+        get_string('recordinglink', 'mod_zoom2'),
+        get_string('recordingpasscode', 'mod_zoom2')
     ];
 }
 
 // Find all entries for this meeting in the database.
-$recordings = zoom_get_meeting_recordings_grouped($zoom->id);
+$recordings = zoom2_get_meeting_recordings_grouped($zoom2->id);
 if (empty($recordings)) {
     $cell = new html_table_cell();
     $cell->colspan = count($table->head);
-    $cell->text = get_string('norecordings', 'mod_zoom');
+    $cell->text = get_string('norecordings', 'mod_zoom2');
     $cell->style = 'text-align: center';
     $row = new html_table_row([$cell]);
     $table->data = [$row];
@@ -88,9 +88,9 @@ if (empty($recordings)) {
         $recordingpasscode = '';
         $recordingshowhtml = '';
         foreach ($grouping as $recording) {
-            // If zoom admin -> show all recordings.
+            // If zoom2 admin -> show all recordings.
             // Or if visible to students.
-            if ($iszoommanager || intval($recording->showrecording) === 1) {
+            if ($iszoom2manager || intval($recording->showrecording) === 1) {
                 if (empty($recordingdate)) {
                     $recordingdate = date('F j, Y, g:i:s a \P\T', $recording->recordingstart);
                 }
@@ -99,7 +99,7 @@ if (empty($recordings)) {
                     $recordingpasscode = $recording->passcode;
                 }
 
-                if ($iszoommanager && empty($recordingshowhtml)) {
+                if ($iszoom2manager && empty($recordingshowhtml)) {
                     $isrecordinghidden = intval($recording->showrecording) === 0;
                     $urlparams = [
                         'id' => $cm->id,
@@ -108,11 +108,11 @@ if (empty($recordings)) {
                         'showrecording' => ($isrecordinghidden) ? 1 : 0,
                         'sesskey' => sesskey(),
                     ];
-                    // If the user is a zoom admin, show the button to toggle whether students can see the recording or not.
-                    $recordingshowurl = new moodle_url('/mod/zoom/showrecording.php', $urlparams);
-                    $recordingshowtext = get_string('recordinghide', 'mod_zoom');
+                    // If the user is a zoom2 admin, show the button to toggle whether students can see the recording or not.
+                    $recordingshowurl = new moodle_url('/mod/zoom2/showrecording.php', $urlparams);
+                    $recordingshowtext = get_string('recordinghide', 'mod_zoom2');
                     if ($isrecordinghidden) {
-                        $recordingshowtext = get_string('recordingshow', 'mod_zoom');
+                        $recordingshowtext = get_string('recordingshow', 'mod_zoom2');
                     }
 
                     $btnclass = 'btn btn-';
@@ -123,7 +123,7 @@ if (empty($recordings)) {
                 }
 
                 $params = ['id' => $cm->id, 'recordingid' => $recording->id];
-                $recordingurl = new moodle_url('/mod/zoom/loadrecording.php', $params);
+                $recordingurl = new moodle_url('/mod/zoom2/loadrecording.php', $params);
                 $recordinglink = html_writer::link($recordingurl, $recording->name);
                 $recordinglinkhtml = html_writer::span($recordinglink, 'recording-link', ['style' => 'margin-right:1rem']);
                 $recordinghtml .= html_writer::div($recordinglinkhtml, 'recording', ['style' => 'margin-bottom:.5rem']);

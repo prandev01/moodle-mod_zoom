@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Represents a Zoom invitation.
+ * Represents a Zoom2 invitation.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @author     Andrew Madden <andrewmadden@catalyst-au.net>
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_zoom;
+namespace mod_zoom2;
 
 /**
  * Invitation class.
@@ -35,7 +35,7 @@ class invitation {
      */
     public const PREFIX = 'invitation_';
 
-    /** @var string|null $invitation The unaltered zoom invitation text. */
+    /** @var string|null $invitation The unaltered zoom2 invitation text. */
     private $invitation;
 
     /** @var array $configregex Array of regex patterns defined in plugin settings. */
@@ -44,7 +44,7 @@ class invitation {
     /**
      * invitation constructor.
      *
-     * @param string|null $invitation Zoom invitation returned from
+     * @param string|null $invitation Zoom2 invitation returned from
      * https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetinginvitation.
      */
     public function __construct($invitation) {
@@ -63,29 +63,29 @@ class invitation {
             return null;
         }
 
-        // If regex patterns are disabled, return the raw zoom meeting invitation.
-        if (!get_config('zoom', 'invitationregexenabled')) {
+        // If regex patterns are disabled, return the raw zoom2 meeting invitation.
+        if (!get_config('zoom2', 'invitationregexenabled')) {
             return $this->invitation;
         }
 
         $displaystring = $this->invitation;
         try {
             // If setting enabled, strip the invite message.
-            if (get_config('zoom', 'invitationremoveinvite')) {
+            if (get_config('zoom2', 'invitationremoveinvite')) {
                 $displaystring = $this->remove_element($displaystring, 'invite');
             }
 
             // If setting enabled, strip the iCal link.
-            if (get_config('zoom', 'invitationremoveicallink')) {
+            if (get_config('zoom2', 'invitationremoveicallink')) {
                 $displaystring = $this->remove_element($displaystring, 'icallink');
             }
 
             // Check user capabilities, and remove parts of the invitation they don't have permission to view.
-            if (!has_capability('mod/zoom:viewjoinurl', \context_module::instance($coursemoduleid), $userid)) {
+            if (!has_capability('mod/zoom2:viewjoinurl', \context_module::instance($coursemoduleid), $userid)) {
                 $displaystring = $this->remove_element($displaystring, 'joinurl');
             }
 
-            if (!has_capability('mod/zoom:viewdialin', \context_module::instance($coursemoduleid), $userid)) {
+            if (!has_capability('mod/zoom2:viewdialin', \context_module::instance($coursemoduleid), $userid)) {
                 $displaystring = $this->remove_element($displaystring, 'onetapmobile');
                 $displaystring = $this->remove_element($displaystring, 'dialin');
                 $displaystring = $this->remove_element($displaystring, 'sip');
@@ -105,7 +105,7 @@ class invitation {
     }
 
     /**
-     * Remove instances of a zoom invitation element using a regex pattern.
+     * Remove instances of a zoom2 invitation element using a regex pattern.
      *
      * @param string $invitation
      * @param string $element
@@ -121,7 +121,7 @@ class invitation {
         $configregex = $this->get_config_invitation_regex();
         if (!array_key_exists($element, $configregex)) {
             throw new \coding_exception('Cannot remove element: ' . $element
-                    . '. See mod/zoom/classes/invitation.php:get_default_invitation_regex for valid elements.');
+                    . '. See mod/zoom2/classes/invitation.php:get_default_invitation_regex for valid elements.');
         }
 
         // If the element pattern is intentionally empty, return the invitation string unaltered.
@@ -134,13 +134,13 @@ class invitation {
 
         // If invitation is null, an error occurred in preg_replace.
         if ($invitation === null) {
-            throw new \moodle_exception('invitationmodificationfailed', 'mod_zoom', $PAGE->url,
+            throw new \moodle_exception('invitationmodificationfailed', 'mod_zoom2', $PAGE->url,
                     ['element' => $element, 'pattern' => $configregex[$element]]);
         }
 
         // Add debugging message to assist site administrator in testing regex patterns if no match is found.
         if (empty($count)) {
-            debugging(get_string('invitationmatchnotfound', 'mod_zoom',
+            debugging(get_string('invitationmatchnotfound', 'mod_zoom2',
                     ['element' => $element, 'pattern' => $configregex[$element]]),
                     DEBUG_DEVELOPER);
         }
@@ -149,7 +149,7 @@ class invitation {
     }
 
     /**
-     * Add a paragraph break above an element defined by a regex pattern in a zoom invitation.
+     * Add a paragraph break above an element defined by a regex pattern in a zoom2 invitation.
      *
      * @param string $invitation
      * @param string $element
@@ -169,7 +169,7 @@ class invitation {
         $result = preg_match($configregex[$element], $invitation, $matches, PREG_OFFSET_CAPTURE);
         // If error occurred in preg_match, show debugging message to help site administrator.
         if ($result === false) {
-            debugging(get_string('invitationmodificationfailed', 'mod_zoom',
+            debugging(get_string('invitationmodificationfailed', 'mod_zoom2',
                     ['element' => $element, 'pattern' => $configregex[$element]]),
                     DEBUG_DEVELOPER);
         }
@@ -200,7 +200,7 @@ class invitation {
     }
 
     /**
-     * Get regex patterns from site config to find the different zoom invitation elements.
+     * Get regex patterns from site config to find the different zoom2 invitation elements.
      *
      * @return array
      * @throws \dml_exception
@@ -210,7 +210,7 @@ class invitation {
             return $this->configregex;
         }
 
-        $config = get_config('zoom');
+        $config = get_config('zoom2');
         $this->configregex = [];
         // Get the regex defined in the plugin settings for each element.
         foreach (self::get_default_invitation_regex() as $element => $pattern) {
@@ -222,14 +222,14 @@ class invitation {
     }
 
     /**
-     * Get default regex patterns to find the different zoom invitation elements.
+     * Get default regex patterns to find the different zoom2 invitation elements.
      *
      * @return string[]
      */
     public static function get_default_invitation_regex(): array {
         return [
-            'invite' => '/^.+is inviting you to a scheduled zoom meeting.+$/mi',
-            'joinurl' => '/^join zoom meeting.*(\n.*)+?(\nmeeting id.+\npasscode.+)$/mi',
+            'invite' => '/^.+is inviting you to a scheduled zoom2 meeting.+$/mi',
+            'joinurl' => '/^join zoom2 meeting.*(\n.*)+?(\nmeeting id.+\npasscode.+)$/mi',
             'onetapmobile' => '/^one tap mobile.*(\n\s*\+.+)+$/mi',
             'dialin' => '/^dial by your location.*(\n\s*\+.+)+(\n.*)+find your local number.+$/mi',
             'sip' => '/^join by sip.*\n.+$/mi',

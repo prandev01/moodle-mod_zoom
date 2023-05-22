@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Define all the restore steps that will be used by the restore_zoom_activity_task
+ * Define all the restore steps that will be used by the restore_zoom2_activity_task
  *
- * @package   mod_zoom
+ * @package   mod_zoom2
  * @category  backup
  * @copyright 2015 UC Regents
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,12 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/zoom/locallib.php');
+require_once($CFG->dirroot . '/mod/zoom2/locallib.php');
 
 /**
- * Structure step to restore one zoom activity
+ * Structure step to restore one zoom2 activity
  */
-class restore_zoom_activity_structure_step extends restore_activity_structure_step {
+class restore_zoom2_activity_structure_step extends restore_activity_structure_step {
     /**
      * Defines structure of path elements to be processed during the restore
      *
@@ -38,8 +38,8 @@ class restore_zoom_activity_structure_step extends restore_activity_structure_st
      */
     protected function define_structure() {
         $paths = [];
-        $paths[] = new restore_path_element('zoom', '/activity/zoom');
-        $paths[] = new restore_path_element('zoom_tracking_field', '/activity/zoom/trackingfields/trackingfield');
+        $paths[] = new restore_path_element('zoom2', '/activity/zoom2');
+        $paths[] = new restore_path_element('zoom2_tracking_field', '/activity/zoom2/trackingfields/trackingfield');
 
         // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
@@ -50,7 +50,7 @@ class restore_zoom_activity_structure_step extends restore_activity_structure_st
      *
      * @param array $data parsed element data
      */
-    protected function process_zoom($data) {
+    protected function process_zoom2($data) {
         global $DB;
 
         $data = (object)$data;
@@ -60,14 +60,14 @@ class restore_zoom_activity_structure_step extends restore_activity_structure_st
 
         // Either create a new meeting or set meeting as expired.
         try {
-            $updateddata = zoom_webservice()->create_meeting($data);
-            $data = populate_zoom_from_response($data, $updateddata);
-            $data->exists_on_zoom = ZOOM_MEETING_EXISTS;
+            $updateddata = zoom2_webservice()->create_meeting($data);
+            $data = populate_zoom2_from_response($data, $updateddata);
+            $data->exists_on_zoom2 = ZOOM2_MEETING_EXISTS;
         } catch (moodle_exception $e) {
             $data->start_url = '';
             $data->join_url = '';
             $data->meeting_id = 0;
-            $data->exists_on_zoom = ZOOM_MEETING_EXPIRED;
+            $data->exists_on_zoom2 = ZOOM2_MEETING_EXPIRED;
             $data->option_auto_recording = 'none';
         }
 
@@ -82,33 +82,33 @@ class restore_zoom_activity_structure_step extends restore_activity_structure_st
             $data->grade = -($this->get_mappingid('scale', abs($data->grade)));
         }
 
-        // Create the zoom instance.
-        $newitemid = $DB->insert_record('zoom', $data);
+        // Create the zoom2 instance.
+        $newitemid = $DB->insert_record('zoom2', $data);
         $this->apply_activity_instance($newitemid);
 
         // Create the calendar events for the new meeting.
         $data->id = $newitemid;
-        zoom_calendar_item_update($data);
+        zoom2_calendar_item_update($data);
     }
 
     /**
-     * Process the zoom tracking fields.
+     * Process the zoom2 tracking fields.
      *
      * @param array $data
      */
-    protected function process_zoom_tracking_field($data) {
+    protected function process_zoom2_tracking_field($data) {
         global $DB;
 
         $data = (object) $data;
         $oldid = $data->id;
 
-        $data->meeting_id = $this->get_new_parentid('zoom');
+        $data->meeting_id = $this->get_new_parentid('zoom2');
 
-        $defaulttrackingfields = zoom_clean_tracking_fields();
+        $defaulttrackingfields = zoom2_clean_tracking_fields();
 
         if (isset($defaulttrackingfields[$data->tracking_field])) {
-            $newitemid = $DB->insert_record('zoom_meeting_tracking_fields', $data);
-            $this->set_mapping('zoom_tracking_field', $oldid, $newitemid);
+            $newitemid = $DB->insert_record('zoom2_meeting_tracking_fields', $data);
+            $this->set_mapping('zoom2_tracking_field', $oldid, $newitemid);
         }
     }
 
@@ -116,7 +116,7 @@ class restore_zoom_activity_structure_step extends restore_activity_structure_st
      * Post-execution actions
      */
     protected function after_execute() {
-        // Add zoom related files, no need to match by itemname (just internally handled context).
-        $this->add_related_files('mod_zoom', 'intro', null);
+        // Add zoom2 related files, no need to match by itemname (just internally handled context).
+        $this->add_related_files('mod_zoom2', 'intro', null);
     }
 }

@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_zoom/mobile_view_page_latest
+    @template mod_zoom2/mobile_view_page_latest
 
-    Page to view a zoom meeting
+    Page to view a zoom2 meeting
 
     Classes required for JS:
     * none
@@ -27,7 +27,7 @@
 
     Example context (json):
     {
-        "zoom": {
+        "zoom2": {
             "intro": "Introduction String",
             "password": "9836451",
             "recurring": 1,
@@ -47,90 +47,90 @@
 }}
 {{=<% %>=}}
 <div>
-    <core-course-module-description description="<% zoom.intro %>" component="mod_zoom" componentId="<% cmid %>"></core-course-module-description>
+    <core-course-module-description description="<% zoom2.intro %>" component="mod_zoom2" componentId="<% cmid %>"></core-course-module-description>
 
     <ion-list>
         <%#available%>
-            <ion-button class="ion-margin" expand="block" color="light" core-site-plugins-call-ws name="mod_zoom_grade_item_update" [params]="{zoomid: <% cmid %>}" [preSets]="{getFromCache: 0, saveToCache: 0}" (onSuccess)="loadMeeting($event)">
-                {{ 'plugin.mod_zoom.join_meeting' | translate }}
+            <ion-button class="ion-margin" expand="block" color="light" core-site-plugins-call-ws name="mod_zoom2_grade_item_update" [params]="{zoom2id: <% cmid %>}" [preSets]="{getFromCache: 0, saveToCache: 0}" (onSuccess)="loadMeeting($event)">
+                {{ 'plugin.mod_zoom2.join_meeting' | translate }}
             </ion-button>
         <%/available%>
         <%^available%>
             <ion-item>
                 <ion-label>
-                    <p>{{ 'plugin.mod_zoom.unavailable' | translate }}</p>
+                    <p>{{ 'plugin.mod_zoom2.unavailable' | translate }}</p>
                 </ion-label>
             </ion-item>
         <%/available%>
 
-        <%#zoom.recurring%>
+        <%#zoom2.recurring%>
             <ion-item>
                 <ion-label>
-                    <p class="item-heading">{{ 'plugin.mod_zoom.recurringmeetinglong' | translate }}</p>
+                    <p class="item-heading">{{ 'plugin.mod_zoom2.recurringmeetinglong' | translate }}</p>
                 </ion-label>
             </ion-item>
-        <%/zoom.recurring%>
-        <%^zoom.recurring%>
+        <%/zoom2.recurring%>
+        <%^zoom2.recurring%>
             <ion-item>
                 <ion-label>
-                    <p class="item-heading">{{ 'plugin.mod_zoom.meeting_time' | translate }}</p>
+                    <p class="item-heading">{{ 'plugin.mod_zoom2.meeting_time' | translate }}</p>
                     <p><% start_time %></p>
                 </ion-label>
             </ion-item>
             <ion-item>
                 <ion-label>
-                    <p class="item-heading">{{ 'plugin.mod_zoom.duration' | translate }}</p>
+                    <p class="item-heading">{{ 'plugin.mod_zoom2.duration' | translate }}</p>
                     <p><% duration %></p>
                 </ion-label>
             </ion-item>
-        <%/zoom.recurring%>
+        <%/zoom2.recurring%>
 
         <ion-item>
             <ion-label>
-                <p class="item-heading">{{ 'plugin.mod_zoom.passwordprotected' | translate }}</p>
-                <%#zoom.password%><p>{{ 'core.yes' | translate }}</p><%/zoom.password%>
-                <%^zoom.password%><p>{{ 'core.no' | translate }}</p><%/zoom.password%>
+                <p class="item-heading">{{ 'plugin.mod_zoom2.passwordprotected' | translate }}</p>
+                <%#zoom2.password%><p>{{ 'core.yes' | translate }}</p><%/zoom2.password%>
+                <%^zoom2.password%><p>{{ 'core.no' | translate }}</p><%/zoom2.password%>
             </ion-label>
         </ion-item>
 
-        <%^zoom.webinar%>
+        <%^zoom2.webinar%>
             <ion-item>
                 <ion-label>
-                    <p class="item-heading">{{ 'plugin.mod_zoom.joinbeforehost' | translate }}</p>
-                    <%#zoom.option_jbh%><p>{{ 'core.yes' | translate }}</p><%/zoom.option_jbh%>
-                    <%^zoom.option_jbh%><p>{{ 'core.no' | translate }}</p><%/zoom.option_jbh%>
+                    <p class="item-heading">{{ 'plugin.mod_zoom2.joinbeforehost' | translate }}</p>
+                    <%#zoom2.option_jbh%><p>{{ 'core.yes' | translate }}</p><%/zoom2.option_jbh%>
+                    <%^zoom2.option_jbh%><p>{{ 'core.no' | translate }}</p><%/zoom2.option_jbh%>
                 </ion-label>
             </ion-item>
             <ion-item>
                 <ion-label>
-                    <p class="item-heading">{{ 'plugin.mod_zoom.starthostjoins' | translate }}</p>
-                    <%#zoom.option_host_video%><p>{{ 'core.yes' | translate }}</p><%/zoom.option_host_video%>
-                    <%^zoom.option_host_video%><p>{{ 'core.no' | translate }}</p><%/zoom.option_host_video%>
+                    <p class="item-heading">{{ 'plugin.mod_zoom2.starthostjoins' | translate }}</p>
+                    <%#zoom2.option_host_video%><p>{{ 'core.yes' | translate }}</p><%/zoom2.option_host_video%>
+                    <%^zoom2.option_host_video%><p>{{ 'core.no' | translate }}</p><%/zoom2.option_host_video%>
                 </ion-label>
             </ion-item>
             <ion-item>
                 <ion-label>
-                    <p class="item-heading">{{ 'plugin.mod_zoom.startpartjoins' | translate }}</p>
-                    <%#zoom.option_participants_video%><p>{{ 'core.yes' | translate }}</p><%/zoom.option_participants_video%>
-                    <%^zoom.option_participants_video%><p>{{ 'core.no' | translate }}</p><%/zoom.option_participants_video%>
+                    <p class="item-heading">{{ 'plugin.mod_zoom2.startpartjoins' | translate }}</p>
+                    <%#zoom2.option_participants_video%><p>{{ 'core.yes' | translate }}</p><%/zoom2.option_participants_video%>
+                    <%^zoom2.option_participants_video%><p>{{ 'core.no' | translate }}</p><%/zoom2.option_participants_video%>
                 </ion-label>
             </ion-item>
-        <%/zoom.webinar%>
+        <%/zoom2.webinar%>
 
         <ion-item>
             <ion-label>
-                <p class="item-heading">{{ 'plugin.mod_zoom.option_audio' | translate }}</p>
+                <p class="item-heading">{{ 'plugin.mod_zoom2.option_audio' | translate }}</p>
                 <p><% option_audio %></p>
             </ion-label>
         </ion-item>
 
-        <%^zoom.recurring%>
+        <%^zoom2.recurring%>
             <ion-item>
                 <ion-label>
-                    <p class="item-heading">{{ 'plugin.mod_zoom.status' | translate }}</p>
+                    <p class="item-heading">{{ 'plugin.mod_zoom2.status' | translate }}</p>
                     <p><% status %></p>
                 </ion-label>
             </ion-item>
-        <%/zoom.recurring%>
+        <%/zoom2.recurring%>
     </ion-list>
 </div>

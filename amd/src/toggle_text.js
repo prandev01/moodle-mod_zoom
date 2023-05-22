@@ -30,10 +30,10 @@ export const init = () => {
     button.addEventListener("click", async() => {
       if (body.style.display === "") {
         body.style.display = "none";
-        button.innerHTML = await getString("meeting_invite_show", "mod_zoom");
+        button.innerHTML = await getString("meeting_invite_show", "mod_zoom2");
       } else {
         body.style.display = "";
-        button.innerHTML = await getString("meeting_invite_hide", "mod_zoom");
+        button.innerHTML = await getString("meeting_invite_hide", "mod_zoom2");
       }
     });
   }

@@ -17,11 +17,11 @@
 /**
  * Zoom module test data generator class
  *
- * @package mod_zoom
+ * @package mod_zoom2
  * @copyright 2020 UC Regents
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_zoom_generator extends testing_module_generator {
+class mod_zoom2_generator extends testing_module_generator {
     /**
      * Creates new Zoom module instance.
      * @param array|stdClass $record
@@ -30,17 +30,17 @@ class mod_zoom_generator extends testing_module_generator {
      */
     public function create_instance($record = null, array $options = null) {
         global $CFG;
-        require_once($CFG->dirroot . '/mod/zoom/locallib.php');
+        require_once($CFG->dirroot . '/mod/zoom2/locallib.php');
 
-        set_config('clientid', 'test', 'zoom');
-        set_config('clientsecret', 'test', 'zoom');
-        set_config('accountid', 'test', 'zoom');
+        set_config('clientid', 'test', 'zoom2');
+        set_config('clientsecret', 'test', 'zoom2');
+        set_config('accountid', 'test', 'zoom2');
         // TODO: Remove with JWT deprecation June 2023.
-        set_config('apikey', 'test', 'zoom');
-        set_config('apisecret', 'test', 'zoom');
+        set_config('apikey', 'test', 'zoom2');
+        set_config('apisecret', 'test', 'zoom2');
 
         // Mock Zoom data for testing.
-        $defaultzoomsettings = [
+        $defaultzoom2settings = [
             'grade' => 0,
             'name' => 'Test Zoom Meeting',
             'meeting_id' => 1,
@@ -56,11 +56,11 @@ class mod_zoom_generator extends testing_module_generator {
             'option_mute_upon_entry' => 0,
             'start_time' => mktime(0, 0, 0, 2, 22, 2021),
             'duration' => 60,
-            'exists_on_zoom' => ZOOM_MEETING_EXPIRED,
+            'exists_on_zoom2' => ZOOM_MEETING_EXPIRED,
         ];
 
         $record = (object) (array) $record;
-        foreach ($defaultzoomsettings as $name => $value) {
+        foreach ($defaultzoom2settings as $name => $value) {
             if (!isset($record->{$name})) {
                 $record->{$name} = $value;
             }

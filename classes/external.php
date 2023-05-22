@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Zoom external API
+ * Zoom2 external API
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @category   external
  * @author     Nick Stefanski <nstefanski@escoffier.edu>
  * @copyright  2017 Auguste Escoffier School of Culinary Arts {@link https://www.escoffier.edu}
@@ -30,9 +30,9 @@ defined('MOODLE_INTERNAL') || die;
 require_once("$CFG->libdir/externallib.php");
 
 /**
- * Zoom external functions
+ * Zoom2 external functions
  */
-class mod_zoom_external extends external_api {
+class mod_zoom2_external extends external_api {
     /**
      * Returns description of method parameters
      *
@@ -42,74 +42,74 @@ class mod_zoom_external extends external_api {
     public static function get_state_parameters() {
         return new external_function_parameters(
             [
-                'zoomid' => new external_value(PARAM_INT, 'zoom course module id'),
+                'zoom2id' => new external_value(PARAM_INT, 'zoom2 course module id'),
             ]
         );
     }
 
     /**
-     * Determine if a zoom meeting is available, meeting status, and the start time, duration, and other meeting options.
-     * This function grabs most of the options to display for users in /mod/zoom/view.php
+     * Determine if a zoom2 meeting is available, meeting status, and the start time, duration, and other meeting options.
+     * This function grabs most of the options to display for users in /mod/zoom2/view.php
      * Host functions are not currently supported
      *
-     * @param int $zoomid the zoom course module id
+     * @param int $zoom2id the zoom2 course module id
      * @return array of warnings and status result
      * @since Moodle 3.1
      * @throws moodle_exception
      */
-    public static function get_state($zoomid) {
+    public static function get_state($zoom2id) {
         global $DB, $CFG;
-        require_once($CFG->dirroot . "/mod/zoom/locallib.php");
+        require_once($CFG->dirroot . "/mod/zoom2/locallib.php");
 
         $params = self::validate_parameters(
             self::get_state_parameters(),
             [
-                'zoomid' => $zoomid,
+                'zoom2id' => $zoom2id,
             ]
         );
         $warnings = [];
 
         // Request and permission validation.
-        $cm = $DB->get_record('course_modules', ['id' => $params['zoomid']], '*', MUST_EXIST);
-        $zoom = $DB->get_record('zoom', ['id' => $cm->instance], '*', MUST_EXIST);
+        $cm = $DB->get_record('course_modules', ['id' => $params['zoom2id']], '*', MUST_EXIST);
+        $zoom2 = $DB->get_record('zoom2', ['id' => $cm->instance], '*', MUST_EXIST);
 
         $context = context_module::instance($cm->id);
         self::validate_context($context);
 
-        require_capability('mod/zoom:view', $context);
+        require_capability('mod/zoom2:view', $context);
 
-        // Call the zoom/locallib API.
-        list($inprogress, $available, $finished) = zoom_get_state($zoom);
+        // Call the zoom2/locallib API.
+        list($inprogress, $available, $finished) = zoom2_get_state($zoom2);
 
         $result = [];
         $result['available'] = $available;
 
-        if ($zoom->recurring) {
+        if ($zoom2->recurring) {
             $result['start_time'] = 0;
             $result['duration'] = 0;
         } else {
-            $result['start_time'] = $zoom->start_time;
-            $result['duration'] = $zoom->duration;
+            $result['start_time'] = $zoom2->start_time;
+            $result['duration'] = $zoom2->duration;
         }
 
-        $result['haspassword'] = (isset($zoom->password) && $zoom->password !== '');
-        $result['joinbeforehost'] = $zoom->option_jbh;
-        $result['startvideohost'] = $zoom->option_host_video;
-        $result['startvideopart'] = $zoom->option_participants_video;
-        $result['audioopt'] = $zoom->option_audio;
+        $result['haspassword'] = (isset($zoom2->password) && $zoom2->password !== '');
+        $result['joinbeforehost'] = $zoom2->option_jbh;
+        $result['startvideohost'] = $zoom2->option_host_video;
+        $result['startvideopart'] = $zoom2->option_participants_video;
+        $result['audioopt'] = $zoom2->option_audio;
 
-        if (!$zoom->recurring) {
-            if ($zoom->exists_on_zoom == ZOOM_MEETING_EXPIRED) {
-                $status = get_string('meeting_nonexistent_on_zoom', 'mod_zoom');
+        if (!$zoom2->recurring) {
+            if ($zoom2->exists_on_zoom2 == ZOOM2_MEETING_EXPIRED) {
+                $status = get_string('meeting_nonexistent_on_zoom2', 'mod_zoom2');
             } else if ($finished) {
-                $status = get_string('meeting_finished', 'mod_zoom');
+                $status = get_string('meeting_finished', 'mod_zoom2');
             } else if ($inprogress) {
-                $status = get_string('meeting_started', 'mod_zoom');
+                $status = get_string('meeting_started', 'mod_zoom2');
             } else {
-                $status = get_string('meeting_not_started', 'mod_zoom');
+                $status = get_string('meeting_not_started', 'mod_zoom2');
             }
         } else {
-            $status = get_string('recurringmeetinglong', 'mod_zoom');
+            $status = get_string('recurringmeetinglong', 'mod_zoom2');
         }
 
         $result['status'] = $status;
@@ -154,39 +154,39 @@ class mod_zoom_external extends external_api {
     public static function grade_item_update_parameters() {
         return new external_function_parameters(
             [
-                'zoomid' => new external_value(PARAM_INT, 'zoom course module id'),
+                'zoom2id' => new external_value(PARAM_INT, 'zoom2 course module id'),
             ]
         );
     }
 
     /**
-     * Creates or updates grade item for the given zoom instance and returns join url.
-     * This function grabs most of the options to display for users in /mod/zoom/view.php
+     * Creates or updates grade item for the given zoom2 instance and returns join url.
+     * This function grabs most of the options to display for users in /mod/zoom2/view.php
      *
-     * @param int $zoomid the zoom course module id
+     * @param int $zoom2id the zoom2 course module id
      * @return array of warnings and status result
      * @since Moodle 3.1
      * @throws moodle_exception
      */
-    public static function grade_item_update($zoomid) {
+    public static function grade_item_update($zoom2id) {
         global $CFG;
-        require_once($CFG->dirroot . '/mod/zoom/locallib.php');
+        require_once($CFG->dirroot . '/mod/zoom2/locallib.php');
 
         $params = self::validate_parameters(
             self::get_state_parameters(),
             [
-                'zoomid' => $zoomid,
+                'zoom2id' => $zoom2id,
             ]
         );
         $warnings = [];
 
-        $context = context_module::instance($params['zoomid']);
+        $context = context_module::instance($params['zoom2id']);
         self::validate_context($context);
 
         // Call load meeting function, do not use start url on mobile.
-        $meetinginfo = zoom_load_meeting($params['zoomid'], $context, $usestarturl = false);
+        $meetinginfo = zoom2_load_meeting($params['zoom2id'], $context, $usestarturl = false);
 
-        // Pass url to join zoom meeting in order to redirect user.
+        // Pass url to join zoom2 meeting in order to redirect user.
         $result = [];
         if ($meetinginfo['nexturl']) {
             $result['status'] = true;
@@ -210,7 +210,7 @@ class mod_zoom_external extends external_api {
         return new external_single_structure(
             [
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
-                'joinurl' => new external_value(PARAM_RAW, 'Zoom meeting join url'),
+                'joinurl' => new external_value(PARAM_RAW, 'Zoom2 meeting join url'),
                 'warnings' => new external_warnings(),
             ]
         );

@@ -16,7 +16,7 @@
 /**
  * Schedule for selection handler.
  *
- * @module     mod_zoom/scheduleforchooser
+ * @module     mod_zoom2/scheduleforchooser
  * @copyright  2022 Antonio Duran Terres <antonio@joomdle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

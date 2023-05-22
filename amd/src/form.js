@@ -1,4 +1,4 @@
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -269,7 +269,7 @@ define(['jquery', 'core/form-autocomplete', 'core/str', 'core/notification'], fu
 
         // Add room event.
         this.init = function() {
-            var stringkeys = [{key: 'room', component: 'zoom'}];
+            var stringkeys = [{key: 'room', component: 'zoom2'}];
             str.get_strings(stringkeys).then().fail(notification.exception);
 
             this.addRoomEvent();
@@ -290,7 +290,7 @@ define(['jquery', 'core/form-autocomplete', 'core/str', 'core/notification'], fu
             thisObject.addBtn.click(function() {
                 thisObject.tabsComponent.countTabs++;
 
-                var newRoomName = M.util.get_string('room', 'zoom') + ' ' + thisObject.tabsComponent.countTabs;
+                var newRoomName = M.util.get_string('room', 'zoom2') + ' ' + thisObject.tabsComponent.countTabs;
                 var newRoomElement = $(thisObject.roomItemToClone);
                 var newRoomDataElement = $(thisObject.roomItemDataToClone);
                 var newRoomIndex = thisObject.tabsComponent.countTabs;
@@ -389,7 +389,7 @@ define(['jquery', 'core/form-autocomplete', 'core/str', 'core/notification'], fu
          * @param {string} placeholder
          */
         this.buildAutocompleteComponent = function(id, placeholder) {
-            var stringkeys = [{key: placeholder, component: 'zoom'}, {key: 'selectionarea', component: 'zoom'}];
+            var stringkeys = [{key: placeholder, component: 'zoom2'}, {key: 'selectionarea', component: 'zoom2'}];
             str.get_strings(stringkeys).then(function(langstrings) {
                 var placeholderString = langstrings[0];
                 var noSelectionString = langstrings[1];

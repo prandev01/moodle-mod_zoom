@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,19 +17,19 @@
 /**
  * Task: update_meetings
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2018 UC Regents
  * @author     Rohan Khajuria
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_zoom\task;
+namespace mod_zoom2\task;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/modinfolib.php');
-require_once($CFG->dirroot . '/mod/zoom/lib.php');
-require_once($CFG->dirroot . '/mod/zoom/locallib.php');
+require_once($CFG->dirroot . '/mod/zoom2/lib.php');
+require_once($CFG->dirroot . '/mod/zoom2/locallib.php');
 
 /**
  * Scheduled task to sychronize meeting data.
@@ -41,7 +41,7 @@ class update_meetings extends \core\task\scheduled_task {
      * @return string
      */
     public function get_name() {
-        return get_string('updatemeetings', 'mod_zoom');
+        return get_string('updatemeetings', 'mod_zoom2');
     }
 
     /**
@@ -53,60 +53,60 @@ class update_meetings extends \core\task\scheduled_task {
         global $DB;
 
         try {
-            $service = zoom_webservice();
+            $service = zoom2_webservice();
         } catch (\moodle_exception $exception) {
             mtrace('Skipping task - ', $exception->getMessage());
             return;
         }
 
         // Show trace message.
-        mtrace('Starting to process existing Zoom meeting activities ...');
+        mtrace('Starting to process existing Zoom2 meeting activities ...');
 
-        // Check all meetings, in case they were deleted/changed on Zoom.
-        $zoomstoupdate = $DB->get_records('zoom', ['exists_on_zoom' => ZOOM_MEETING_EXISTS]);
+        // Check all meetings, in case they were deleted/changed on Zoom2.
+        $zoom2stoupdate = $DB->get_records('zoom2', ['exists_on_zoom2' => ZOOM2_MEETING_EXISTS]);
         $courseidstoupdate = [];
         $calendarfields = ['intro', 'introformat', 'start_time', 'duration', 'recurring'];
 
-        foreach ($zoomstoupdate as $zoom) {
+        foreach ($zoom2stoupdate as $zoom2) {
             // Show trace message.
-            mtrace('Processing next Zoom meeting activity ...');
-            mtrace('  Zoom meeting ID: ' . $zoom->meeting_id);
-            mtrace('  Zoom meeting title: ' . $zoom->name);
-            $zoomactivityurl = new \moodle_url('/mod/zoom/view.php', ['n' => $zoom->id]);
-            mtrace('  Zoom meeting activity URL: ' . $zoomactivityurl->out());
-            mtrace('  Moodle course ID: ' . $zoom->course);
+            mtrace('Processing next Zoom2 meeting activity ...');
+            mtrace('  Zoom2 meeting ID: ' . $zoom2->meeting_id);
+            mtrace('  Zoom2 meeting title: ' . $zoom2->name);
+            $zoom2activityurl = new \moodle_url('/mod/zoom2/view.php', ['n' => $zoom2->id]);
+            mtrace('  Zoom2 meeting activity URL: ' . $zoom2activityurl->out());
+            mtrace('  Moodle course ID: ' . $zoom2->course);
 
             $gotinfo = false;
             try {
-                $response = $service->get_meeting_webinar_info($zoom->meeting_id, $zoom->webinar);
+                $response = $service->get_meeting_webinar_info($zoom2->meeting_id, $zoom2->webinar);
                 $gotinfo = true;
-            } catch (\zoom_not_found_exception $error) {
-                $zoom->exists_on_zoom = ZOOM_MEETING_EXPIRED;
-                $DB->update_record('zoom', $zoom);
+            } catch (\zoom2_not_found_exception $error) {
+                $zoom2->exists_on_zoom2 = ZOOM2_MEETING_EXPIRED;
+                $DB->update_record('zoom2', $zoom2);
 
                 // Show trace message.
-                mtrace('  => Marked Zoom meeting activity for Zoom meeting ID ' . $zoom->meeting_id .
-                        ' as not existing anymore on Zoom');
+                mtrace('  => Marked Zoom2 meeting activity for Zoom2 meeting ID ' . $zoom2->meeting_id .
+                        ' as not existing anymore on Zoom2');
             } catch (\moodle_exception $error) {
                 // Show trace message.
-                mtrace('  !! Error updating Zoom meeting activity for Zoom meeting ID ' . $zoom->meeting_id . ': ' . $error);
+                mtrace('  !! Error updating Zoom2 meeting activity for Zoom2 meeting ID ' . $zoom2->meeting_id . ': ' . $error);
             }
 
             if ($gotinfo) {
                 $changed = false;
-                $newzoom = populate_zoom_from_response($zoom, $response);
+                $newzoom2 = populate_zoom2_from_response($zoom2, $response);
 
-                // Iterate over all Zoom meeting fields.
-                foreach ((array) $zoom as $field => $value) {
+                // Iterate over all Zoom2 meeting fields.
+                foreach ((array) $zoom2 as $field => $value) {
                     // The start_url has a parameter that always changes, so it doesn't really count as a change.
                     // Similarly, the timemodified parameter does not count as change if nothing else has changed.
                     if ($field === 'start_url' || $field === 'timemodified') {
                         continue;
                     }
 
-                    // For doing a better comparison and for easing mtrace() output, convert booleans from the Zoom response
+                    // For doing a better comparison and for easing mtrace() output, convert booleans from the Zoom2 response
                     // to strings like they are stored in the Moodle database for the existing activity.
-                    $newfieldvalue = $newzoom->$field;
+                    $newfieldvalue = $newzoom2->$field;
                     if (is_bool($newfieldvalue)) {
                         $newfieldvalue = $newfieldvalue ? '1' : '0';
                     }
@@ -122,48 +122,48 @@ class update_meetings extends \core\task\scheduled_task {
                 }
 
                 if ($changed) {
-                    $newzoom->timemodified = time();
-                    $DB->update_record('zoom', $newzoom);
+                    $newzoom2->timemodified = time();
+                    $DB->update_record('zoom2', $newzoom2);
 
                     // Show trace message.
-                    mtrace('  => Updated Zoom meeting activity for Zoom meeting ID ' . $zoom->meeting_id);
+                    mtrace('  => Updated Zoom2 meeting activity for Zoom2 meeting ID ' . $zoom2->meeting_id);
 
                     // If the topic/title was changed, mark this course for cache clearing.
-                    if ($zoom->name != $newzoom->name) {
-                        $courseidstoupdate[] = $newzoom->course;
+                    if ($zoom2->name != $newzoom2->name) {
+                        $courseidstoupdate[] = $newzoom2->course;
                     }
                 } else {
                     // Show trace message.
-                    mtrace('  => Skipped Zoom meeting activity for Zoom meeting ID ' . $zoom->meeting_id . ' as unchanged');
+                    mtrace('  => Skipped Zoom2 meeting activity for Zoom2 meeting ID ' . $zoom2->meeting_id . ' as unchanged');
                 }
 
                 // Update the calendar events.
-                if (!$zoom->recurring && $changed) {
+                if (!$zoom2->recurring && $changed) {
                     // Check if calendar needs updating.
                     foreach ($calendarfields as $field) {
-                        if ($zoom->$field != $newzoom->$field) {
-                            zoom_calendar_item_update($newzoom);
+                        if ($zoom2->$field != $newzoom2->$field) {
+                            zoom2_calendar_item_update($newzoom2);
 
                             // Show trace message.
-                            mtrace('  => Updated calendar item for Zoom meeting ID ' . $zoom->meeting_id);
+                            mtrace('  => Updated calendar item for Zoom2 meeting ID ' . $zoom2->meeting_id);
 
                             break;
                         }
                     }
-                } else if ($zoom->recurring) {
+                } else if ($zoom2->recurring) {
                     // Show trace message.
-                    mtrace('  => Updated calendar items for recurring Zoom meeting ID ' . $zoom->meeting_id);
-                    zoom_calendar_item_update($newzoom);
+                    mtrace('  => Updated calendar items for recurring Zoom2 meeting ID ' . $zoom2->meeting_id);
+                    zoom2_calendar_item_update($newzoom2);
                 }
 
                 // Update tracking fields for meeting.
-                mtrace('  => Updated tracking fields for Zoom meeting ID ' . $zoom->meeting_id);
-                zoom_sync_meeting_tracking_fields($zoom->id, $response->tracking_fields ?? []);
+                mtrace('  => Updated tracking fields for Zoom2 meeting ID ' . $zoom2->meeting_id);
+                zoom2_sync_meeting_tracking_fields($zoom2->id, $response->tracking_fields ?? []);
             }
         }
 
         // Show trace message.
-        mtrace('Finished to process existing Zoom meetings');
+        mtrace('Finished to process existing Zoom2 meetings');
 
         // Show trace message.
         mtrace('Starting to rebuild course caches ...');

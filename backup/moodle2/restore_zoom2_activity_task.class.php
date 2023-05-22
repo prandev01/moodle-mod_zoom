@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 /**
  * Provides the restore activity task class
  *
- * @package   mod_zoom
+ * @package   mod_zoom2
  * @category  backup
  * @copyright 2015 UC Regents
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,14 +25,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/zoom/backup/moodle2/restore_zoom_stepslib.php');
+require_once($CFG->dirroot . '/mod/zoom2/backup/moodle2/restore_zoom2_stepslib.php');
 
 /**
- * Restore task for the zoom activity module
+ * Restore task for the zoom2 activity module
  *
  * Provides all the settings and steps to perform complete restore of the activity.
  */
-class restore_zoom_activity_task extends restore_activity_task {
+class restore_zoom2_activity_task extends restore_activity_task {
     /**
      * Define (add) particular settings this activity can have
      */
@@ -45,7 +45,7 @@ class restore_zoom_activity_task extends restore_activity_task {
      */
     protected function define_my_steps() {
         // We have just one structure step here.
-        $this->add_step(new restore_zoom_activity_structure_step('zoom_structure', 'zoom.xml'));
+        $this->add_step(new restore_zoom2_activity_structure_step('zoom2_structure', 'zoom2.xml'));
     }
 
     /**
@@ -55,7 +55,7 @@ class restore_zoom_activity_task extends restore_activity_task {
     public static function define_decode_contents() {
         $contents = [];
 
-        $contents[] = new restore_decode_content('zoom', ['intro'], 'zoom');
+        $contents[] = new restore_decode_content('zoom2', ['intro'], 'zoom2');
 
         return $contents;
     }
@@ -67,23 +67,23 @@ class restore_zoom_activity_task extends restore_activity_task {
     public static function define_decode_rules() {
         $rules = [];
 
-        $rules[] = new restore_decode_rule('ZOOMVIEWBYID', '/mod/zoom/view.php?id=$1', 'course_module');
-        $rules[] = new restore_decode_rule('ZOOMINDEX', '/mod/zoom/index.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('ZOOM2VIEWBYID', '/mod/zoom2/view.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('ZOOM2INDEX', '/mod/zoom2/index.php?id=$1', 'course_module');
 
         return $rules;
     }
 
     /**
      * Define the restore log rules that will be applied by the
-     * restore_logs_processor when restoring zoom logs. It must return one array
+     * restore_logs_processor when restoring zoom2 logs. It must return one array
      * of restore_log_rule objects
      */
     public static function define_restore_log_rules() {
         $rules = [];
 
-        $rules[] = new restore_log_rule('zoom', 'add', 'view.php?id={course_module}', '{zoom}');
-        $rules[] = new restore_log_rule('zoom', 'update', 'view.php?id={course_module}', '{zoom}');
-        $rules[] = new restore_log_rule('zoom', 'view', 'view.php?id={course_module}', '{zoom}');
+        $rules[] = new restore_log_rule('zoom2', 'add', 'view.php?id={course_module}', '{zoom2}');
+        $rules[] = new restore_log_rule('zoom2', 'update', 'view.php?id={course_module}', '{zoom2}');
+        $rules[] = new restore_log_rule('zoom2', 'view', 'view.php?id={course_module}', '{zoom2}');
 
         return $rules;
     }
@@ -100,7 +100,7 @@ class restore_zoom_activity_task extends restore_activity_task {
     public static function define_restore_log_rules_for_course() {
         $rules = [];
 
-        $rules[] = new restore_log_rule('zoom', 'view all', 'index.php?id={course}', null);
+        $rules[] = new restore_log_rule('zoom2', 'view all', 'index.php?id={course}', null);
 
         return $rules;
     }

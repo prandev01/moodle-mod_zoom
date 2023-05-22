@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Console page to output the results of the CLI to get the Zoom meeting reports.
+ * Console page to output the results of the CLI to get the Zoom2 meeting reports.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2020 UC Regents
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,15 +38,15 @@ $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 require_course_login($course);
 
 $context = context_course::instance($course->id);
-require_capability('mod/zoom:view', $context);
-require_capability('mod/zoom:refreshsessions', $context);
+require_capability('mod/zoom2:view', $context);
+require_capability('mod/zoom2:refreshsessions', $context);
 
 // Set up the moodle page.
-$PAGE->set_url('/mod/zoom/console/');
+$PAGE->set_url('/mod/zoom2/console/');
 
-echo html_writer::tag('h1', get_string('getmeetingreports', 'mod_zoom'));
+echo html_writer::tag('h1', get_string('getmeetingreports', 'mod_zoom2'));
 $output = null;
-exec("php $CFG->dirroot/mod/zoom/cli/get_meeting_report.php --start=$startdate --end=$enddate --courseid=$courseid", $output);
+exec("php $CFG->dirroot/mod/zoom2/cli/get_meeting_report.php --start=$startdate --end=$enddate --courseid=$courseid", $output);
 echo '<pre>';
 echo implode("\n", $output);
 echo '</pre>';

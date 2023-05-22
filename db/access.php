@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Capability definitions for the zoom module
+ * Capability definitions for the zoom2 module
  *
  * The capabilities are loaded into the database table when the module is
  * installed or updated. Whenever the capability definitions are updated,
@@ -39,7 +39,7 @@
  *
  * The variable name for the capability definitions array is $capabilities
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2015 UC Regents
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -48,7 +48,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // Modify capabilities as needed and remove this comment.
 $capabilities = [
-    'mod/zoom:addinstance' => [
+    'mod/zoom2:addinstance' => [
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -59,7 +59,7 @@ $capabilities = [
         'clonepermissionsfrom' => 'moodle/course:manageactivities',
     ],
 
-    'mod/zoom:view' => [
+    'mod/zoom2:view' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => [
@@ -71,7 +71,7 @@ $capabilities = [
         ],
     ],
 
-    'mod/zoom:refreshsessions' => [
+    'mod/zoom2:refreshsessions' => [
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -80,7 +80,7 @@ $capabilities = [
         ],
     ],
 
-    'mod/zoom:eligiblealternativehost' => [
+    'mod/zoom2:eligiblealternativehost' => [
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
@@ -90,7 +90,7 @@ $capabilities = [
         ],
     ],
 
-    'mod/zoom:viewjoinurl' => [
+    'mod/zoom2:viewjoinurl' => [
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
@@ -101,7 +101,7 @@ $capabilities = [
         ],
     ],
 
-    'mod/zoom:viewdialin' => [
+    'mod/zoom2:viewdialin' => [
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,

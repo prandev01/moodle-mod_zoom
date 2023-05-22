@@ -17,13 +17,13 @@
 /**
  * Tests for the invitation class.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @author     Andrew Madden <andrewmadden@catalyst-au.net>
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_zoom;
+namespace mod_zoom2;
 
 use advanced_testcase;
 use context_system;
@@ -32,9 +32,9 @@ use moodle_url;
 
 /**
  * PHPunit testcase class for invitations.
- * @covers \mod_zoom\invitation
+ * @covers \mod_zoom2\invitation
  */
-class mod_zoom_invitation_test extends advanced_testcase {
+class mod_zoom2_invitation_test extends advanced_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
      */
@@ -47,26 +47,26 @@ class mod_zoom_invitation_test extends advanced_testcase {
      * Run before every test.
      */
     protected function setUp(): void {
-        set_config('invitationregexenabled', 1, 'zoom');
+        set_config('invitationregexenabled', 1, 'zoom2');
     }
 
     /**
-     * Test zoom invitation display message for user with all capabilities.
+     * Test zoom2 invitation display message for user with all capabilities.
      */
     public function test_display_message_when_user_has_all_capabilities() {
         $this->resetAfterTest();
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $zoom = $this->getDataGenerator()->create_module('zoom', ['course' => $course]);
-        $message = (new \mod_zoom\invitation(
+        $zoom2 = $this->getDataGenerator()->create_module('zoom2', ['course' => $course]);
+        $message = (new \mod_zoom2\invitation(
             $this->get_mock_invitation_message_scheduledmeeting()
-        ))->get_display_string($zoom->cmid);
-        $expectedmessage = "Organization is inviting you to a scheduled Zoom meeting.\r\n"
+        ))->get_display_string($zoom2->cmid);
+        $expectedmessage = "Organization is inviting you to a scheduled Zoom2 meeting.\r\n"
             . "\r\n"
-            . "Topic: Zoom Meeting\r\n"
+            . "Topic: Zoom2 Meeting\r\n"
             . "Time: Mar 15, 2021 06:08 AM London\r\n"
             . "\r\n"
-            . "Join Zoom Meeting\r\n"
+            . "Join Zoom2 Meeting\r\n"
             . "https://us02web.zoom.us/j/12341234123?pwd=THBLWExVS0QyYnV1Z1nZTDJGYVI2QT09\r\n"
             . "\r\n"
             . "Meeting ID: 123 1234 1234\r\n"
@@ -87,7 +87,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
             . "Find your local number: https://us02web.zoom.us/u/abcde12345\r\n"
             . "\r\n"
             . "Join by SIP\r\n"
-            . "1231231231234@zoomabc.com\r\n"
+            . "1231231231234@zoom2abc.com\r\n"
             . "\r\n"
             . "Join by H.323\r\n"
             . "162.255.37.11 (US West)\r\n"
@@ -110,7 +110,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
     }
 
     /**
-     * Test zoom invitation display message for user with only the mod/zoom:viewjoinurl capability.
+     * Test zoom2 invitation display message for user with only the mod/zoom2:viewjoinurl capability.
      */
     public function test_display_message_when_user_has_viewjoinurl_capability() {
         $this->resetAfterTest();
@@ -118,18 +118,18 @@ class mod_zoom_invitation_test extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $role = $this->getDataGenerator()->create_role();
-        $zoom = $this->getDataGenerator()->create_module('zoom', ['course' => $course]);
-        assign_capability('mod/zoom:viewjoinurl', CAP_ALLOW, $role, context_system::instance()->id);
+        $zoom2 = $this->getDataGenerator()->create_module('zoom2', ['course' => $course]);
+        assign_capability('mod/zoom2:viewjoinurl', CAP_ALLOW, $role, context_system::instance()->id);
         role_assign($role, $user->id, context_course::instance($course->id));
-        $message = (new \mod_zoom\invitation(
+        $message = (new \mod_zoom2\invitation(
             $this->get_mock_invitation_message_scheduledmeeting()
-        ))->get_display_string($zoom->cmid, $user->id);
-        $expectedmessage = "Organization is inviting you to a scheduled Zoom meeting.\r\n"
+        ))->get_display_string($zoom2->cmid, $user->id);
+        $expectedmessage = "Organization is inviting you to a scheduled Zoom2 meeting.\r\n"
             . "\r\n"
-            . "Topic: Zoom Meeting\r\n"
+            . "Topic: Zoom2 Meeting\r\n"
             . "Time: Mar 15, 2021 06:08 AM London\r\n"
             . "\r\n"
-            . "Join Zoom Meeting\r\n"
+            . "Join Zoom2 Meeting\r\n"
             . "https://us02web.zoom.us/j/12341234123?pwd=THBLWExVS0QyYnV1Z1nZTDJGYVI2QT09\r\n"
             . "\r\n"
             . "Meeting ID: 123 1234 1234\r\n"
@@ -138,7 +138,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
     }
 
     /**
-     * Test zoom invitation display message for user with only the mod/zoom:viewdialin capability.
+     * Test zoom2 invitation display message for user with only the mod/zoom2:viewdialin capability.
      */
     public function test_display_message_when_user_has_viewdialin_capability() {
         $this->resetAfterTest();
@@ -146,15 +146,15 @@ class mod_zoom_invitation_test extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $role = $this->getDataGenerator()->create_role();
-        $zoom = $this->getDataGenerator()->create_module('zoom', ['course' => $course]);
-        assign_capability('mod/zoom:viewdialin', CAP_ALLOW, $role, context_system::instance());
+        $zoom2 = $this->getDataGenerator()->create_module('zoom2', ['course' => $course]);
+        assign_capability('mod/zoom2:viewdialin', CAP_ALLOW, $role, context_system::instance());
         role_assign($role, $user->id, context_course::instance($course->id));
-        $message = (new \mod_zoom\invitation(
+        $message = (new \mod_zoom2\invitation(
             $this->get_mock_invitation_message_scheduledmeeting()
-        ))->get_display_string($zoom->cmid, $user->id);
-        $expectedmessage = "Organization is inviting you to a scheduled Zoom meeting.\r\n"
+        ))->get_display_string($zoom2->cmid, $user->id);
+        $expectedmessage = "Organization is inviting you to a scheduled Zoom2 meeting.\r\n"
             . "\r\n"
-            . "Topic: Zoom Meeting\r\n"
+            . "Topic: Zoom2 Meeting\r\n"
             . "Time: Mar 15, 2021 06:08 AM London\r\n"
             . "\r\n"
             . "One tap mobile\r\n"
@@ -172,7 +172,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
             . "Find your local number: https://us02web.zoom.us/u/abcde12345\r\n"
             . "\r\n"
             . "Join by SIP\r\n"
-            . "1231231231234@zoomabc.com\r\n"
+            . "1231231231234@zoom2abc.com\r\n"
             . "\r\n"
             . "Join by H.323\r\n"
             . "162.255.37.11 (US West)\r\n"
@@ -195,7 +195,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
     }
 
     /**
-     * Test zoom invitation display message for user has no capabilities.
+     * Test zoom2 invitation display message for user has no capabilities.
      */
     public function test_display_message_when_user_has_no_capabilities() {
         $this->resetAfterTest();
@@ -203,14 +203,14 @@ class mod_zoom_invitation_test extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $role = $this->getDataGenerator()->create_role();
-        $zoom = $this->getDataGenerator()->create_module('zoom', ['course' => $course]);
+        $zoom2 = $this->getDataGenerator()->create_module('zoom2', ['course' => $course]);
         role_assign($role, $user->id, context_course::instance($course->id));
-        $message = (new \mod_zoom\invitation(
+        $message = (new \mod_zoom2\invitation(
             $this->get_mock_invitation_message_scheduledmeeting()
-        ))->get_display_string($zoom->cmid, $user->id);
-        $expectedmessage = "Organization is inviting you to a scheduled Zoom meeting.\r\n"
+        ))->get_display_string($zoom2->cmid, $user->id);
+        $expectedmessage = "Organization is inviting you to a scheduled Zoom2 meeting.\r\n"
             . "\r\n"
-            . "Topic: Zoom Meeting\r\n"
+            . "Topic: Zoom2 Meeting\r\n"
             . "Time: Mar 15, 2021 06:08 AM London";
         $this->assertEquals($expectedmessage, $message);
     }
@@ -222,17 +222,17 @@ class mod_zoom_invitation_test extends advanced_testcase {
         global $PAGE;
         $this->resetAfterTest();
         $this->setAdminUser();
-        set_config('invitation_joinurl', '', 'zoom');
+        set_config('invitation_joinurl', '', 'zoom2');
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $role = $this->getDataGenerator()->create_role();
-        $zoom = $this->getDataGenerator()->create_module('zoom', ['course' => $course]);
+        $zoom2 = $this->getDataGenerator()->create_module('zoom2', ['course' => $course]);
         role_assign($role, $user->id, context_course::instance($course->id));
-        // Set mock zoom activity URL for page as exception messages expect it.
-        $PAGE->set_url(new moodle_url('/mod/zoom/view.php?id=123'));
-        $message = (new \mod_zoom\invitation(
+        // Set mock zoom2 activity URL for page as exception messages expect it.
+        $PAGE->set_url(new moodle_url('/mod/zoom2/view.php?id=123'));
+        $message = (new \mod_zoom2\invitation(
             $this->get_mock_invitation_message_scheduledmeeting()
-        ))->get_display_string($zoom->cmid, $user->id);
+        ))->get_display_string($zoom2->cmid, $user->id);
         $this->assertDebuggingNotCalled();
     }
 
@@ -243,18 +243,18 @@ class mod_zoom_invitation_test extends advanced_testcase {
         global $PAGE;
         $this->resetAfterTest();
         $this->setAdminUser();
-        set_config('invitation_joinurl', '~', 'zoom');
+        set_config('invitation_joinurl', '~', 'zoom2');
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $role = $this->getDataGenerator()->create_role();
-        $zoom = $this->getDataGenerator()->create_module('zoom', ['course' => $course]);
+        $zoom2 = $this->getDataGenerator()->create_module('zoom2', ['course' => $course]);
         role_assign($role, $user->id, context_course::instance($course->id));
-        // Set mock zoom activity URL for page as exception messages expect it.
-        $PAGE->set_url(new moodle_url('/mod/zoom/view.php?id=123'));
-        $message = (new \mod_zoom\invitation(
+        // Set mock zoom2 activity URL for page as exception messages expect it.
+        $PAGE->set_url(new moodle_url('/mod/zoom2/view.php?id=123'));
+        $message = (new \mod_zoom2\invitation(
             $this->get_mock_invitation_message_scheduledmeeting()
-        ))->get_display_string($zoom->cmid, $user->id);
-        $this->assertDebuggingCalled('Error in regex for zoom invitation element: "joinurl" with pattern: "~".');
+        ))->get_display_string($zoom2->cmid, $user->id);
+        $this->assertDebuggingCalled('Error in regex for zoom2 invitation element: "joinurl" with pattern: "~".');
     }
 
     /**
@@ -263,34 +263,34 @@ class mod_zoom_invitation_test extends advanced_testcase {
     public function test_display_message_when_a_regex_pattern_is_finds_no_match() {
         $this->resetAfterTest();
         $this->setAdminUser();
-        set_config('invitation_joinurl', '/nomatch/mi', 'zoom');
+        set_config('invitation_joinurl', '/nomatch/mi', 'zoom2');
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $role = $this->getDataGenerator()->create_role();
-        $zoom = $this->getDataGenerator()->create_module('zoom', ['course' => $course]);
+        $zoom2 = $this->getDataGenerator()->create_module('zoom2', ['course' => $course]);
         role_assign($role, $user->id, context_course::instance($course->id));
-        $message = (new \mod_zoom\invitation(
+        $message = (new \mod_zoom2\invitation(
             $this->get_mock_invitation_message_scheduledmeeting()
-        ))->get_display_string($zoom->cmid, $user->id);
-        $this->assertDebuggingCalled('No match found in zoom invitation for element: "joinurl" with pattern: "/nomatch/mi".');
+        ))->get_display_string($zoom2->cmid, $user->id);
+        $this->assertDebuggingCalled('No match found in zoom2 invitation for element: "joinurl" with pattern: "/nomatch/mi".');
     }
 
     /**
-     * Test removing the invite sentence from the zoom meeting message.
+     * Test removing the invite sentence from the zoom2 meeting message.
      */
     public function test_display_message_has_invite_removed_if_setting_enabled() {
         $this->resetAfterTest();
         $this->setAdminUser();
-        set_config('invitationremoveinvite', '1', 'zoom');
+        set_config('invitationremoveinvite', '1', 'zoom2');
         $course = $this->getDataGenerator()->create_course();
-        $zoom = $this->getDataGenerator()->create_module('zoom', ['course' => $course]);
-        $message = (new \mod_zoom\invitation(
+        $zoom2 = $this->getDataGenerator()->create_module('zoom2', ['course' => $course]);
+        $message = (new \mod_zoom2\invitation(
             $this->get_mock_invitation_message_scheduledmeeting()
-        ))->get_display_string($zoom->cmid);
-        $expectedmessage = "Topic: Zoom Meeting\r\n"
+        ))->get_display_string($zoom2->cmid);
+        $expectedmessage = "Topic: Zoom2 Meeting\r\n"
             . "Time: Mar 15, 2021 06:08 AM London\r\n"
             . "\r\n"
-            . "Join Zoom Meeting\r\n"
+            . "Join Zoom2 Meeting\r\n"
             . "https://us02web.zoom.us/j/12341234123?pwd=THBLWExVS0QyYnV1Z1nZTDJGYVI2QT09\r\n"
             . "\r\n"
             . "Meeting ID: 123 1234 1234\r\n"
@@ -311,7 +311,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
             . "Find your local number: https://us02web.zoom.us/u/abcde12345\r\n"
             . "\r\n"
             . "Join by SIP\r\n"
-            . "1231231231234@zoomabc.com\r\n"
+            . "1231231231234@zoom2abc.com\r\n"
             . "\r\n"
             . "Join by H.323\r\n"
             . "162.255.37.11 (US West)\r\n"
@@ -334,23 +334,23 @@ class mod_zoom_invitation_test extends advanced_testcase {
     }
 
     /**
-     * Test not removing the invite sentence from the zoom meeting message.
+     * Test not removing the invite sentence from the zoom2 meeting message.
      */
     public function test_display_message_does_not_have_invite_removed_if_setting_disabled() {
         $this->resetAfterTest();
         $this->setAdminUser();
-        set_config('invitationremoveinvite', '0', 'zoom');
+        set_config('invitationremoveinvite', '0', 'zoom2');
         $course = $this->getDataGenerator()->create_course();
-        $zoom = $this->getDataGenerator()->create_module('zoom', ['course' => $course]);
-        $message = (new \mod_zoom\invitation(
+        $zoom2 = $this->getDataGenerator()->create_module('zoom2', ['course' => $course]);
+        $message = (new \mod_zoom2\invitation(
             $this->get_mock_invitation_message_scheduledmeeting()
-        ))->get_display_string($zoom->cmid);
-        $expectedmessage = "Organization is inviting you to a scheduled Zoom meeting.\r\n"
+        ))->get_display_string($zoom2->cmid);
+        $expectedmessage = "Organization is inviting you to a scheduled Zoom2 meeting.\r\n"
             . "\r\n"
-            . "Topic: Zoom Meeting\r\n"
+            . "Topic: Zoom2 Meeting\r\n"
             . "Time: Mar 15, 2021 06:08 AM London\r\n"
             . "\r\n"
-            . "Join Zoom Meeting\r\n"
+            . "Join Zoom2 Meeting\r\n"
             . "https://us02web.zoom.us/j/12341234123?pwd=THBLWExVS0QyYnV1Z1nZTDJGYVI2QT09\r\n"
             . "\r\n"
             . "Meeting ID: 123 1234 1234\r\n"
@@ -371,7 +371,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
             . "Find your local number: https://us02web.zoom.us/u/abcde12345\r\n"
             . "\r\n"
             . "Join by SIP\r\n"
-            . "1231231231234@zoomabc.com\r\n"
+            . "1231231231234@zoom2abc.com\r\n"
             . "\r\n"
             . "Join by H.323\r\n"
             . "162.255.37.11 (US West)\r\n"
@@ -394,25 +394,25 @@ class mod_zoom_invitation_test extends advanced_testcase {
     }
 
     /**
-     * Test removing the iCal link from the zoom meeting message.
+     * Test removing the iCal link from the zoom2 meeting message.
      */
     public function test_display_message_has_icallink_removed_if_setting_enabled() {
         $this->resetAfterTest();
         $this->setAdminUser();
-        set_config('invitationremoveicallink', '1', 'zoom');
+        set_config('invitationremoveicallink', '1', 'zoom2');
         $course = $this->getDataGenerator()->create_course();
-        $zoom = $this->getDataGenerator()->create_module('zoom', ['course' => $course]);
+        $zoom2 = $this->getDataGenerator()->create_module('zoom2', ['course' => $course]);
 
         // Test a scheduled meeting.
-        $message = (new \mod_zoom\invitation(
+        $message = (new \mod_zoom2\invitation(
             $this->get_mock_invitation_message_scheduledmeeting()
-        ))->get_display_string($zoom->cmid);
-        $expectedmessage = "Organization is inviting you to a scheduled Zoom meeting.\r\n"
+        ))->get_display_string($zoom2->cmid);
+        $expectedmessage = "Organization is inviting you to a scheduled Zoom2 meeting.\r\n"
             . "\r\n"
-            . "Topic: Zoom Meeting\r\n"
+            . "Topic: Zoom2 Meeting\r\n"
             . "Time: Mar 15, 2021 06:08 AM London\r\n"
             . "\r\n"
-            . "Join Zoom Meeting\r\n"
+            . "Join Zoom2 Meeting\r\n"
             . "https://us02web.zoom.us/j/12341234123?pwd=THBLWExVS0QyYnV1Z1nZTDJGYVI2QT09\r\n"
             . "\r\n"
             . "Meeting ID: 123 1234 1234\r\n"
@@ -433,7 +433,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
             . "Find your local number: https://us02web.zoom.us/u/abcde12345\r\n"
             . "\r\n"
             . "Join by SIP\r\n"
-            . "1231231231234@zoomabc.com\r\n"
+            . "1231231231234@zoom2abc.com\r\n"
             . "\r\n"
             . "Join by H.323\r\n"
             . "162.255.37.11 (US West)\r\n"
@@ -455,15 +455,15 @@ class mod_zoom_invitation_test extends advanced_testcase {
         $this->assertEquals($expectedmessage, $message);
 
         // Test a recurring meeting with no fixed time.
-        $message = (new \mod_zoom\invitation(
+        $message = (new \mod_zoom2\invitation(
             $this->get_mock_invitation_message_recurringnofixed()
-        ))->get_display_string($zoom->cmid);
-        $expectedmessage = "Organization is inviting you to a scheduled Zoom meeting.\r\n"
+        ))->get_display_string($zoom2->cmid);
+        $expectedmessage = "Organization is inviting you to a scheduled Zoom2 meeting.\r\n"
             . "\r\n"
-            . "Topic: Zoom Meeting\r\n"
+            . "Topic: Zoom2 Meeting\r\n"
             . "Time: This is a recurring meeting Meet anytime\r\n"
             . "\r\n"
-            . "Join Zoom Meeting\r\n"
+            . "Join Zoom2 Meeting\r\n"
             . "https://us02web.zoom.us/j/12341234123?pwd=THBLWExVS0QyYnV1Z1nZTDJGYVI2QT09\r\n"
             . "\r\n"
             . "Meeting ID: 123 1234 1234\r\n"
@@ -484,7 +484,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
             . "Find your local number: https://us02web.zoom.us/u/abcde12345\r\n"
             . "\r\n"
             . "Join by SIP\r\n"
-            . "1231231231234@zoomabc.com\r\n"
+            . "1231231231234@zoom2abc.com\r\n"
             . "\r\n"
             . "Join by H.323\r\n"
             . "162.255.37.11 (US West)\r\n"
@@ -506,17 +506,17 @@ class mod_zoom_invitation_test extends advanced_testcase {
         $this->assertEquals($expectedmessage, $message);
 
         // Test a recurring meeting with fixed time.
-        $message = (new \mod_zoom\invitation($this->get_mock_invitation_message_recurringfixed()))->get_display_string($zoom->cmid);
-        $expectedmessage = "Organization is inviting you to a scheduled Zoom meeting.\r\n"
+        $message = (new \mod_zoom2\invitation($this->get_mock_invitation_message_recurringfixed()))->get_display_string($zoom2->cmid);
+        $expectedmessage = "Organization is inviting you to a scheduled Zoom2 meeting.\r\n"
             . "\r\n"
-            . "Topic: Zoom Meeting\r\n"
+            . "Topic: Zoom2 Meeting\r\n"
             . "Time: Mar 15, 2021 06:08 AM London\r\n"
             . "        Every day, until Mar 17, 2021, 3 occurrence(s)\r\n"
             . "        Mar 15, 2021 06:08 AM\r\n"
             . "        Mar 16, 2021 06:08 AM\r\n"
             . "        Mar 17, 2021 06:08 AM\r\n"
             . "\r\n"
-            . "Join Zoom Meeting\r\n"
+            . "Join Zoom2 Meeting\r\n"
             . "https://us02web.zoom.us/j/12341234123?pwd=THBLWExVS0QyYnV1Z1nZTDJGYVI2QT09\r\n"
             . "\r\n"
             . "Meeting ID: 123 1234 1234\r\n"
@@ -537,7 +537,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
             . "Find your local number: https://us02web.zoom.us/u/abcde12345\r\n"
             . "\r\n"
             . "Join by SIP\r\n"
-            . "1231231231234@zoomabc.com\r\n"
+            . "1231231231234@zoom2abc.com\r\n"
             . "\r\n"
             . "Join by H.323\r\n"
             . "162.255.37.11 (US West)\r\n"
@@ -561,31 +561,31 @@ class mod_zoom_invitation_test extends advanced_testcase {
         // We expect that the debugging was called two times:
         // - one time for the scheduled meeting
         // - one time for the recurring meeting with no fixed time.
-        $debugmessage = 'No match found in zoom invitation for element: "icallink"'
+        $debugmessage = 'No match found in zoom2 invitation for element: "icallink"'
             . ' with pattern: "/^.+download and import the following iCalendar.+$\n.+$/mi".';
         $this->assertDebuggingCalledCount(2, [$debugmessage, $debugmessage]);
     }
 
     /**
-     * Test not removing the iCal link from the zoom meeting message.
+     * Test not removing the iCal link from the zoom2 meeting message.
      */
     public function test_display_message_does_not_have_icallink_removed_if_setting_disabled() {
         $this->resetAfterTest();
         $this->setAdminUser();
-        set_config('invitationremoveicallink', '0', 'zoom');
+        set_config('invitationremoveicallink', '0', 'zoom2');
         $course = $this->getDataGenerator()->create_course();
-        $zoom = $this->getDataGenerator()->create_module('zoom', ['course' => $course]);
+        $zoom2 = $this->getDataGenerator()->create_module('zoom2', ['course' => $course]);
 
         // Test a scheduled meeting.
-        $message = (new \mod_zoom\invitation(
+        $message = (new \mod_zoom2\invitation(
             $this->get_mock_invitation_message_scheduledmeeting()
-        ))->get_display_string($zoom->cmid);
-        $expectedmessage = "Organization is inviting you to a scheduled Zoom meeting.\r\n"
+        ))->get_display_string($zoom2->cmid);
+        $expectedmessage = "Organization is inviting you to a scheduled Zoom2 meeting.\r\n"
             . "\r\n"
-            . "Topic: Zoom Meeting\r\n"
+            . "Topic: Zoom2 Meeting\r\n"
             . "Time: Mar 15, 2021 06:08 AM London\r\n"
             . "\r\n"
-            . "Join Zoom Meeting\r\n"
+            . "Join Zoom2 Meeting\r\n"
             . "https://us02web.zoom.us/j/12341234123?pwd=THBLWExVS0QyYnV1Z1nZTDJGYVI2QT09\r\n"
             . "\r\n"
             . "Meeting ID: 123 1234 1234\r\n"
@@ -606,7 +606,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
             . "Find your local number: https://us02web.zoom.us/u/abcde12345\r\n"
             . "\r\n"
             . "Join by SIP\r\n"
-            . "1231231231234@zoomabc.com\r\n"
+            . "1231231231234@zoom2abc.com\r\n"
             . "\r\n"
             . "Join by H.323\r\n"
             . "162.255.37.11 (US West)\r\n"
@@ -628,15 +628,15 @@ class mod_zoom_invitation_test extends advanced_testcase {
         $this->assertEquals($expectedmessage, $message);
 
         // Test a recurring meeting with no fixed time.
-        $message = (new \mod_zoom\invitation(
+        $message = (new \mod_zoom2\invitation(
             $this->get_mock_invitation_message_recurringnofixed()
-        ))->get_display_string($zoom->cmid);
-        $expectedmessage = "Organization is inviting you to a scheduled Zoom meeting.\r\n"
+        ))->get_display_string($zoom2->cmid);
+        $expectedmessage = "Organization is inviting you to a scheduled Zoom2 meeting.\r\n"
             . "\r\n"
-            . "Topic: Zoom Meeting\r\n"
+            . "Topic: Zoom2 Meeting\r\n"
             . "Time: This is a recurring meeting Meet anytime\r\n"
             . "\r\n"
-            . "Join Zoom Meeting\r\n"
+            . "Join Zoom2 Meeting\r\n"
             . "https://us02web.zoom.us/j/12341234123?pwd=THBLWExVS0QyYnV1Z1nZTDJGYVI2QT09\r\n"
             . "\r\n"
             . "Meeting ID: 123 1234 1234\r\n"
@@ -657,7 +657,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
             . "Find your local number: https://us02web.zoom.us/u/abcde12345\r\n"
             . "\r\n"
             . "Join by SIP\r\n"
-            . "1231231231234@zoomabc.com\r\n"
+            . "1231231231234@zoom2abc.com\r\n"
             . "\r\n"
             . "Join by H.323\r\n"
             . "162.255.37.11 (US West)\r\n"
@@ -679,20 +679,20 @@ class mod_zoom_invitation_test extends advanced_testcase {
         $this->assertEquals($expectedmessage, $message);
 
         // Test a recurring meeting with fixed time.
-        $message = (new \mod_zoom\invitation($this->get_mock_invitation_message_recurringfixed()))->get_display_string($zoom->cmid);
-        $expectedmessage = "Organization is inviting you to a scheduled Zoom meeting.\r\n"
+        $message = (new \mod_zoom2\invitation($this->get_mock_invitation_message_recurringfixed()))->get_display_string($zoom2->cmid);
+        $expectedmessage = "Organization is inviting you to a scheduled Zoom2 meeting.\r\n"
             . "\r\n"
-            . "Topic: Zoom Meeting\r\n"
+            . "Topic: Zoom2 Meeting\r\n"
             . "Time: Mar 15, 2021 06:08 AM London\r\n"
             . "        Every day, until Mar 17, 2021, 3 occurrence(s)\r\n"
             . "        Mar 15, 2021 06:08 AM\r\n"
             . "        Mar 16, 2021 06:08 AM\r\n"
             . "        Mar 17, 2021 06:08 AM\r\n"
             . "Please download and import the following iCalendar (.ics) files to your calendar system.\r\n"
-            . "Zoom Meeting: https://us02web.zoom.us/meeting/u7Utd-GqqTkiEtEkvHci3z_X0W3TMjX_Avua/ics?icsToken="
+            . "Zoom2 Meeting: https://us02web.zoom.us/meeting/u7Utd-GqqTkiEtEkvHci3z_X0W3TMjX_Avua/ics?icsToken="
             . "88tyKu-prjsiGNOXuBGCR_McAoigWerwtnpHj7d4lwnNACkAeDzOZtURBp91KOfx\r\n"
             . "\r\n"
-            . "Join Zoom Meeting\r\n"
+            . "Join Zoom2 Meeting\r\n"
             . "https://us02web.zoom.us/j/12341234123?pwd=THBLWExVS0QyYnV1Z1nZTDJGYVI2QT09\r\n"
             . "\r\n"
             . "Meeting ID: 123 1234 1234\r\n"
@@ -713,7 +713,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
             . "Find your local number: https://us02web.zoom.us/u/abcde12345\r\n"
             . "\r\n"
             . "Join by SIP\r\n"
-            . "1231231231234@zoomabc.com\r\n"
+            . "1231231231234@zoom2abc.com\r\n"
             . "\r\n"
             . "Join by H.323\r\n"
             . "162.255.37.11 (US West)\r\n"
@@ -738,12 +738,12 @@ class mod_zoom_invitation_test extends advanced_testcase {
     /**
      * Test get_display_string returns null without throwing an error if the invitation string provided is null.
      */
-    public function test_display_message_when_instantiated_with_null_zoom_meeting_invitation() {
+    public function test_display_message_when_instantiated_with_null_zoom2_meeting_invitation() {
         $this->resetAfterTest();
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $zoom = $this->getDataGenerator()->create_module('zoom', ['course' => $course]);
-        $message = (new \mod_zoom\invitation(null))->get_display_string($zoom->cmid);
+        $zoom2 = $this->getDataGenerator()->create_module('zoom2', ['course' => $course]);
+        $message = (new \mod_zoom2\invitation(null))->get_display_string($zoom2->cmid);
         $this->assertNull($message);
     }
 
@@ -751,33 +751,33 @@ class mod_zoom_invitation_test extends advanced_testcase {
      * Test display message is returned in full regardless of capabilities if regex patterns are disabled.
      */
     public function test_display_message_when_user_has_no_capabilities_with_regex_disabled() {
-        set_config('invitationregexenabled', 0, 'zoom');
+        set_config('invitationregexenabled', 0, 'zoom2');
         $this->resetAfterTest();
         $this->setAdminUser();
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $role = $this->getDataGenerator()->create_role();
-        $zoom = $this->getDataGenerator()->create_module('zoom', ['course' => $course]);
+        $zoom2 = $this->getDataGenerator()->create_module('zoom2', ['course' => $course]);
         role_assign($role, $user->id, context_course::instance($course->id));
-        $message = (new \mod_zoom\invitation(
+        $message = (new \mod_zoom2\invitation(
             $this->get_mock_invitation_message_scheduledmeeting()
-        ))->get_display_string($zoom->cmid, $user->id);
+        ))->get_display_string($zoom2->cmid, $user->id);
         $expectedmessage = $this->get_mock_invitation_message_scheduledmeeting();
         $this->assertEquals($expectedmessage, $message);
     }
 
     /**
-     * Get a mock zoom invitation email message for a scheduled meeting.
+     * Get a mock zoom2 invitation email message for a scheduled meeting.
      *
      * @return string
      */
     private function get_mock_invitation_message_scheduledmeeting(): string {
-        return "Organization is inviting you to a scheduled Zoom meeting.\r\n"
+        return "Organization is inviting you to a scheduled Zoom2 meeting.\r\n"
             . "\r\n"
-            . "Topic: Zoom Meeting\r\n"
+            . "Topic: Zoom2 Meeting\r\n"
             . "Time: Mar 15, 2021 06:08 AM London\r\n"
             . "\r\n"
-            . "Join Zoom Meeting\r\n"
+            . "Join Zoom2 Meeting\r\n"
             . "https://us02web.zoom.us/j/12341234123?pwd=THBLWExVS0QyYnV1Z1nZTDJGYVI2QT09\r\n"
             . "\r\n"
             . "Meeting ID: 123 1234 1234\r\n"
@@ -797,7 +797,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
             . "Find your local number: https://us02web.zoom.us/u/abcde12345\r\n"
             . "\r\n"
             . "Join by SIP\r\n"
-            . "1231231231234@zoomabc.com\r\n"
+            . "1231231231234@zoom2abc.com\r\n"
             . "\r\n"
             . "Join by H.323\r\n"
             . "162.255.37.11 (US West)\r\n"
@@ -819,17 +819,17 @@ class mod_zoom_invitation_test extends advanced_testcase {
     }
 
     /**
-     * Get a mock zoom invitation email message for a recurring meeting with no fixed time.
+     * Get a mock zoom2 invitation email message for a recurring meeting with no fixed time.
      *
      * @return string
      */
     private function get_mock_invitation_message_recurringnofixed(): string {
-        return "Organization is inviting you to a scheduled Zoom meeting.\r\n"
+        return "Organization is inviting you to a scheduled Zoom2 meeting.\r\n"
             . "\r\n"
-            . "Topic: Zoom Meeting\r\n"
+            . "Topic: Zoom2 Meeting\r\n"
             . "Time: This is a recurring meeting Meet anytime\r\n"
             . "\r\n"
-            . "Join Zoom Meeting\r\n"
+            . "Join Zoom2 Meeting\r\n"
             . "https://us02web.zoom.us/j/12341234123?pwd=THBLWExVS0QyYnV1Z1nZTDJGYVI2QT09\r\n"
             . "\r\n"
             . "Meeting ID: 123 1234 1234\r\n"
@@ -849,7 +849,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
             . "Find your local number: https://us02web.zoom.us/u/abcde12345\r\n"
             . "\r\n"
             . "Join by SIP\r\n"
-            . "1231231231234@zoomabc.com\r\n"
+            . "1231231231234@zoom2abc.com\r\n"
             . "\r\n"
             . "Join by H.323\r\n"
             . "162.255.37.11 (US West)\r\n"
@@ -871,24 +871,24 @@ class mod_zoom_invitation_test extends advanced_testcase {
     }
 
     /**
-     * Get a mock zoom invitation email message for a recurring meeting with fixed time.
+     * Get a mock zoom2 invitation email message for a recurring meeting with fixed time.
      *
      * @return string
      */
     private function get_mock_invitation_message_recurringfixed(): string {
-        return "Organization is inviting you to a scheduled Zoom meeting.\r\n"
+        return "Organization is inviting you to a scheduled Zoom2 meeting.\r\n"
             . "\r\n"
-            . "Topic: Zoom Meeting\r\n"
+            . "Topic: Zoom2 Meeting\r\n"
             . "Time: Mar 15, 2021 06:08 AM London\r\n"
             . "        Every day, until Mar 17, 2021, 3 occurrence(s)\r\n"
             . "        Mar 15, 2021 06:08 AM\r\n"
             . "        Mar 16, 2021 06:08 AM\r\n"
             . "        Mar 17, 2021 06:08 AM\r\n"
             . "Please download and import the following iCalendar (.ics) files to your calendar system.\r\n"
-            . "Zoom Meeting: https://us02web.zoom.us/meeting/u7Utd-GqqTkiEtEkvHci3z_X0W3TMjX_Avua/ics?icsToken="
+            . "Zoom2 Meeting: https://us02web.zoom.us/meeting/u7Utd-GqqTkiEtEkvHci3z_X0W3TMjX_Avua/ics?icsToken="
             . "88tyKu-prjsiGNOXuBGCR_McAoigWerwtnpHj7d4lwnNACkAeDzOZtURBp91KOfx\r\n"
             . "\r\n"
-            . "Join Zoom Meeting\r\n"
+            . "Join Zoom2 Meeting\r\n"
             . "https://us02web.zoom.us/j/12341234123?pwd=THBLWExVS0QyYnV1Z1nZTDJGYVI2QT09\r\n"
             . "\r\n"
             . "Meeting ID: 123 1234 1234\r\n"
@@ -908,7 +908,7 @@ class mod_zoom_invitation_test extends advanced_testcase {
             . "Find your local number: https://us02web.zoom.us/u/abcde12345\r\n"
             . "\r\n"
             . "Join by SIP\r\n"
-            . "1231231231234@zoomabc.com\r\n"
+            . "1231231231234@zoom2abc.com\r\n"
             . "\r\n"
             . "Join by H.323\r\n"
             . "162.255.37.11 (US West)\r\n"

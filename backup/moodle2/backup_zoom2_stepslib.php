@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,32 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines backup_zoom_activity_structure_step class.
+ * Defines backup_zoom2_activity_structure_step class.
  *
- * @package   mod_zoom
+ * @package   mod_zoom2
  * @category  backup
  * @copyright 2015 UC Regents
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Define the complete zoom structure for backup, with file and id annotations.
+ * Define the complete zoom2 structure for backup, with file and id annotations.
  */
-class backup_zoom_activity_structure_step extends backup_activity_structure_step {
+class backup_zoom2_activity_structure_step extends backup_activity_structure_step {
     /**
      * Defines the backup structure of the module.
      *
      * @return backup_nested_element
      */
     protected function define_structure() {
-        // Define the root element describing the zoom instance.
-        $zoom = new backup_nested_element('zoom', ['id'], [
+        // Define the root element describing the zoom2 instance.
+        $zoom2 = new backup_nested_element('zoom2', ['id'], [
             'intro', 'introformat', 'grade', 'meeting_id', 'start_url', 'join_url', 'created_at', 'host_id', 'name',
             'start_time', 'timemodified', 'recurring', 'recurrence_type', 'repeat_interval', 'weekly_days', 'monthly_day',
             'monthly_week', 'monthly_week_day', 'monthly_repeat_option', 'end_times', 'end_date_time', 'end_date_option',
             'webinar', 'duration', 'timezone', 'password', 'option_jbh', 'option_start_type', 'option_host_video',
             'option_participants_video', 'option_audio', 'option_mute_upon_entry', 'option_waiting_room',
-            'option_authenticated_users', 'option_encryption_type', 'exists_on_zoom', 'alternative_hosts',
+            'option_authenticated_users', 'option_encryption_type', 'exists_on_zoom2', 'alternative_hosts',
             'recordings_visible_default', 'show_schedule', 'show_security', 'show_media', 'option_auto_recording',
             'registration',
         ]);
@@ -50,21 +50,21 @@ class backup_zoom_activity_structure_step extends backup_activity_structure_step
         $trackingfield = new backup_nested_element('trackingfield', ['id'], ['meeting_id', 'tracking_field', 'value']);
 
         // If we had more elements, we would build the tree here.
-        $zoom->add_child($trackingfields);
+        $zoom2->add_child($trackingfields);
         $trackingfields->add_child($trackingfield);
 
         // Define data sources.
-        $zoom->set_source_table('zoom', ['id' => backup::VAR_ACTIVITYID]);
-        $trackingfield->set_source_table('zoom_meeting_tracking_fields', ['meeting_id' => backup::VAR_ACTIVITYID]);
+        $zoom2->set_source_table('zoom2', ['id' => backup::VAR_ACTIVITYID]);
+        $trackingfield->set_source_table('zoom2_meeting_tracking_fields', ['meeting_id' => backup::VAR_ACTIVITYID]);
 
         // If we were referring to other tables, we would annotate the relation
         // with the element's annotate_ids() method.
 
         // Define file annotations.
         // Intro does not need itemid.
-        $zoom->annotate_files('mod_zoom', 'intro', null);
+        $zoom2->annotate_files('mod_zoom2', 'intro', null);
 
-        // Return the root element (zoom), wrapped into standard activity structure.
-        return $this->prepare_activity_structure($zoom);
+        // Return the root element (zoom2), wrapped into standard activity structure.
+        return $this->prepare_activity_structure($zoom2);
     }
 }

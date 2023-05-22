@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
 /**
  * Defines the version and other meta-info about the plugin.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2015 UC Regents
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_zoom';
+$plugin->component = 'mod_zoom2';
 $plugin->version = 2023051900;
 $plugin->release = 'v4.10.2';
 $plugin->requires = 2017111300;

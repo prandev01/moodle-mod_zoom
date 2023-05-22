@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 /**
  * Provides code to be executed during the module installation.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2015 UC Regents
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@
  *
  * @see upgrade_plugins_modules()
  */
-function xmldb_zoom_install() {
+function xmldb_zoom2_install() {
 }
 
 /**
@@ -35,5 +35,5 @@ function xmldb_zoom_install() {
  *
  * @see upgrade_plugins_modules()
  */
-function xmldb_zoom_install_recovery() {
+function xmldb_zoom2_install_recovery() {
 }

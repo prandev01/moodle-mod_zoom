@@ -1,0 +1,52 @@
+<ion-view xmlns="http://www.w3.org/1999/html">
+    <ion-nav-title><mm-format-text watch="true">{{ title }}</mm-format-text></ion-nav-title>
+    <ion-content padding="true" mm-state-class>
+        <ion-refresher pulling-text="{{ 'mm.core.pulltorefresh' | translate }}" on-refresh="doRefresh()" ng-if="loaded"></ion-refresher>
+        <mm-loading hide-until="loaded">
+            <mm-course-mod-description description="description" component="{{component}}" component-id="{{componentId}}" watch="true"></mm-course-mod-description>
+
+            <a class="button disabled clearfix" ng-if="!available">{{ 'mma.mod_zoom2.unabletojoin' | translate }}</a>
+            <a ng-click="go()" ng-if="available" class="button button-block icon-left ion-link button-positive clearfix">
+                {{ 'mma.mod_zoom2.joinmeeting' | translate }}
+            </a>
+
+            <!-- Render the start time if it exists. Otherwise its a recurring meeting with no start time -->
+            <div ng-if="hasStartTime" class="clearfix item item-text-wrap">
+                <h2>{{ 'mma.mod_zoom2.starttime' | translate }}</h2>
+                {{ startTime }}
+            </div>
+            <div ng-if="!hasStartTime" class="clearfix item item-text-wrap">
+                <h2>{{ 'mma.mod_zoom2.recurring' | translate }}</h2>
+            </div>
+            <div class="clearfix item item-text-wrap">
+                <h2>{{ 'mma.mod_zoom2.passwordprotected' | translate }}</h2>
+                <span ng-if="passwordProtected">{{ 'mma.mod_zoom2.enabled' | translate }}</span>
+                <span ng-if="!passwordProtected">{{ 'mma.mod_zoom2.disabled' | translate }}</span>
+            </div>
+            <div class="clearfix item item-text-wrap">
+                <h2>{{ 'mma.mod_zoom2.beforehost' | translate }}</h2>
+                <span ng-if="joinMeetingBeforeHost">{{ 'mma.mod_zoom2.enabled' | translate }}</span>
+                <span ng-if="!joinMeetingBeforeHost">{{ 'mma.mod_zoom2.disabled' | translate }}</span>
+            </div>
+            <div class="clearfix item item-text-wrap">
+                <h2>{{ 'mma.mod_zoom2.starthost' | translate }}</h2>
+                <span ng-if="startWhenHostJoins">{{ 'mma.mod_zoom2.enabled' | translate }}</span>
+                <span ng-if="!startWhenHostJoins">{{ 'mma.mod_zoom2.disabled' | translate }}</span>
+            </div>
+            <div class="clearfix item item-text-wrap">
+                <h2>{{ 'mma.mod_zoom2.startpart' | translate }}</h2>
+                <span ng-if="startWhenParticipantJoins">{{ 'mma.mod_zoom2.enabled' | translate }}</span>
+                <span ng-if="!startWhenParticipantJoins">{{ 'mma.mod_zoom2.disabled' | translate }}</span>
+            </div>
+            <div class="clearfix item item-text-wrap">
+                <h2>{{ 'mma.mod_zoom2.audiooptions' | translate }}</h2>
+                <span ng-if="audioOptions">{{ 'mma.mod_zoom2.enabled' | translate }}</span>
+                <span ng-if="!audioOptions">{{ 'mma.mod_zoom2.disabled' | translate }}</span>
+            </div>
+            <div class="clearfix item item-text-wrap">
+                <h2>{{ 'mma.mod_zoom2.status' | translate }}</h2>
+                {{ status }}
+            </div>
+        </mm-loading>
+    </ion-content>
+</ion-view>

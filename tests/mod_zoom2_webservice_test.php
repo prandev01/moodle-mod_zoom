@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,29 +17,29 @@
 /**
  * Unit tests for get_meeting_reports task class.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2019 UC Regents
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_zoom;
+namespace mod_zoom2;
 
 use advanced_testcase;
-use mod_zoom_webservice;
+use mod_zoom2_webservice;
 use moodle_exception;
-use zoom_api_retry_failed_exception;
+use zoom2_api_retry_failed_exception;
 
 /**
  * PHPunit testcase class.
- * @covers \mod_zoom_webservice
+ * @covers \mod_zoom2_webservice
  */
-class mod_zoom_webservice_test extends advanced_testcase {
+class mod_zoom2_webservice_test extends advanced_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
      */
     public static function setUpBeforeClass(): void {
         global $CFG;
-        require_once($CFG->dirroot . '/mod/zoom/locallib.php');
+        require_once($CFG->dirroot . '/mod/zoom2/locallib.php');
     }
 
     /**
@@ -48,12 +48,12 @@ class mod_zoom_webservice_test extends advanced_testcase {
     public function setUp(): void {
         $this->resetAfterTest();
         // Set fake values so we can test methods in class.
-        set_config('clientid', 'test', 'zoom');
-        set_config('clientsecret', 'test', 'zoom');
-        set_config('accountid', 'test', 'zoom');
+        set_config('clientid', 'test', 'zoom2');
+        set_config('clientsecret', 'test', 'zoom2');
+        set_config('accountid', 'test', 'zoom2');
         // TODO: Remove with JWT deprecation June 2023.
-        set_config('apikey', 'test', 'zoom');
-        set_config('apisecret', 'test', 'zoom');
+        set_config('apikey', 'test', 'zoom2');
+        set_config('apisecret', 'test', 'zoom2');
 
         $this->notfoundmockcurl = new class {
             // @codingStandardsIgnoreStart
@@ -87,7 +87,7 @@ class mod_zoom_webservice_test extends advanced_testcase {
      * Tests that uuid are encoded properly for use in web service calls.
      */
     public function test_encode_uuid() {
-        $service = zoom_webservice();
+        $service = zoom2_webservice();
 
         // If uuid includes / or // it needs to be double encoded.
         $uuid = $service->encode_uuid('/u2F0gUNSqqC7DT+08xKrw==');
@@ -105,7 +105,7 @@ class mod_zoom_webservice_test extends advanced_testcase {
      * Tests whether the meeting not found errors are properly parsed.
      */
     public function test_meeting_not_found_exception() {
-        $mockservice = $this->getMockBuilder('\mod_zoom_webservice')
+        $mockservice = $this->getMockBuilder('\mod_zoom2_webservice')
             ->setMethods(['make_curl_call', 'get_curl_object', 'get_access_token'])
             ->getMock();
 
@@ -125,8 +125,8 @@ class mod_zoom_webservice_test extends advanced_testcase {
         try {
             $response = $mockservice->get_meeting_webinar_info('-1', false);
         } catch (moodle_exception $error) {
-            $this->assertEquals(3001, $error->zoomerrorcode);
-            $this->assertTrue(zoom_is_meeting_gone_error($error));
+            $this->assertEquals(3001, $error->zoom2errorcode);
+            $this->assertTrue(zoom2_is_meeting_gone_error($error));
             $foundexception = true;
         }
 
@@ -137,7 +137,7 @@ class mod_zoom_webservice_test extends advanced_testcase {
      * Tests whether user not found errors are properly parsed.
      */
     public function test_user_not_found_exception() {
-        $mockservice = $this->getMockBuilder('\mod_zoom_webservice')
+        $mockservice = $this->getMockBuilder('\mod_zoom2_webservice')
             ->setMethods(['make_curl_call', 'get_curl_object', 'get_access_token'])
             ->getMock();
 
@@ -157,9 +157,9 @@ class mod_zoom_webservice_test extends advanced_testcase {
         try {
             $founduser = $mockservice->get_user('-1');
         } catch (moodle_exception $error) {
-            $this->assertEquals(1001, $error->zoomerrorcode);
-            $this->assertTrue(zoom_is_meeting_gone_error($error));
-            $this->assertTrue(zoom_is_user_not_found_error($error));
+            $this->assertEquals(1001, $error->zoom2errorcode);
+            $this->assertTrue(zoom2_is_meeting_gone_error($error));
+            $this->assertTrue(zoom2_is_user_not_found_error($error));
             $foundexception = true;
         }
 
@@ -197,7 +197,7 @@ class mod_zoom_webservice_test extends advanced_testcase {
             }
         };
 
-        $mockservice = $this->getMockBuilder('\mod_zoom_webservice')
+        $mockservice = $this->getMockBuilder('\mod_zoom2_webservice')
             ->setMethods(['make_curl_call', 'get_curl_object', 'get_access_token'])
             ->getMock();
 
@@ -217,9 +217,9 @@ class mod_zoom_webservice_test extends advanced_testcase {
         try {
             $founduser = $mockservice->get_user('-1');
         } catch (moodle_exception $error) {
-            $this->assertEquals(1120, $error->zoomerrorcode);
-            $this->assertTrue(zoom_is_meeting_gone_error($error));
-            $this->assertTrue(zoom_is_user_not_found_error($error));
+            $this->assertEquals(1120, $error->zoom2errorcode);
+            $this->assertTrue(zoom2_is_meeting_gone_error($error));
+            $this->assertTrue(zoom2_is_user_not_found_error($error));
             $foundexception = true;
         }
 
@@ -277,7 +277,7 @@ class mod_zoom_webservice_test extends advanced_testcase {
             }
         };
 
-        $mockservice = $this->getMockBuilder('\mod_zoom_webservice')
+        $mockservice = $this->getMockBuilder('\mod_zoom2_webservice')
             ->setMethods(['make_curl_call', 'get_curl_object', 'get_access_token'])
             ->getMock();
 
@@ -350,7 +350,7 @@ class mod_zoom_webservice_test extends advanced_testcase {
             }
         };
 
-        $mockservice = $this->getMockBuilder('\mod_zoom_webservice')
+        $mockservice = $this->getMockBuilder('\mod_zoom2_webservice')
             ->setMethods(['make_curl_call', 'get_curl_object', 'get_access_token'])
             ->getMock();
 
@@ -432,7 +432,7 @@ class mod_zoom_webservice_test extends advanced_testcase {
             }
         };
 
-        $mockservice = $this->getMockBuilder('\mod_zoom_webservice')
+        $mockservice = $this->getMockBuilder('\mod_zoom2_webservice')
             ->setMethods(['get_curl_object', 'get_access_token'])
             ->getMock();
 
@@ -447,14 +447,14 @@ class mod_zoom_webservice_test extends advanced_testcase {
         $foundexception = false;
         try {
             $result = $mockservice->get_user("1");
-        } catch (zoom_api_retry_failed_exception $error) {
+        } catch (zoom2_api_retry_failed_exception $error) {
             $foundexception = true;
             $this->assertEquals($error->response, 'too many retries');
         }
 
         $this->assertTrue($foundexception);
         // Check that we retried MAX_RETRIES times.
-        $this->assertDebuggingCalledCount(mod_zoom_webservice::MAX_RETRIES);
+        $this->assertDebuggingCalledCount(mod_zoom2_webservice::MAX_RETRIES);
     }
 
     /**
@@ -515,7 +515,7 @@ class mod_zoom_webservice_test extends advanced_testcase {
             }
         };
 
-        $mockservice = $this->getMockBuilder('\mod_zoom_webservice')
+        $mockservice = $this->getMockBuilder('\mod_zoom2_webservice')
             ->setMethods(['get_curl_object', 'get_access_token'])
             ->getMock();
 
@@ -545,6 +545,6 @@ class mod_zoom_webservice_test extends advanced_testcase {
                 'until next retry. Current retry: 5', $debuggingmsg->message);
 
         // Check that we retried MAX_RETRIES times.
-        $this->assertDebuggingCalledCount(mod_zoom_webservice::MAX_RETRIES);
+        $this->assertDebuggingCalledCount(mod_zoom2_webservice::MAX_RETRIES);
     }
 }

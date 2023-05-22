@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * List all zoom meetings.
+ * List all zoom2 meetings.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2015 UC Regents
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,38 +28,38 @@ require_once($CFG->libdir . '/accesslib.php');
 require_once($CFG->libdir . '/moodlelib.php');
 
 require_login();
-// Additional access checks in zoom_get_instance_setup().
-list($course, $cm, $zoom) = zoom_get_instance_setup();
+// Additional access checks in zoom2_get_instance_setup().
+list($course, $cm, $zoom2) = zoom2_get_instance_setup();
 
 global $DB;
 
 // Check capability.
 $context = context_module::instance($cm->id);
-require_capability('mod/zoom:addinstance', $context);
+require_capability('mod/zoom2:addinstance', $context);
 
 $uuid = required_param('uuid', PARAM_RAW);
 $export = optional_param('export', null, PARAM_ALPHA);
 
-$PAGE->set_url('/mod/zoom/participants.php', ['id' => $cm->id, 'uuid' => $uuid, 'export' => $export]);
+$PAGE->set_url('/mod/zoom2/participants.php', ['id' => $cm->id, 'uuid' => $uuid, 'export' => $export]);
 
-$strname = $zoom->name;
-$strtitle = get_string('participants', 'mod_zoom');
+$strname = $zoom2->name;
+$strtitle = get_string('participants', 'mod_zoom2');
 $PAGE->navbar->add($strtitle);
 $PAGE->set_title("$course->shortname: $strname");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('incourse');
 
-$maskparticipantdata = get_config('zoom', 'maskparticipantdata');
+$maskparticipantdata = get_config('zoom2', 'maskparticipantdata');
 // If participant data is masked then display a message stating as such and be done with it.
 if ($maskparticipantdata) {
-    zoom_fatal_error(
+    zoom2_fatal_error(
         'participantdatanotavailable_help',
-        'mod_zoom',
-        new moodle_url('/mod/zoom/report.php', ['id' => $cm->id])
+        'mod_zoom2',
+        new moodle_url('/mod/zoom2/report.php', ['id' => $cm->id])
     );
 }
 
-$sessions = zoom_get_sessions_for_display($zoom->id);
+$sessions = zoom2_get_sessions_for_display($zoom2->id);
 $participants = $sessions[$uuid]['participants'];
 
 // Display the headers/etc if we're not exporting, or if there is no data.
@@ -70,8 +70,8 @@ if (empty($export) || empty($participants)) {
 
     // Stop if there is no data.
     if (empty($participants)) {
-        notice(get_string('noparticipants', 'mod_zoom'),
-                new moodle_url('/mod/zoom/report.php', ['id' => $cm->id]));
+        notice(get_string('noparticipants', 'mod_zoom2'),
+                new moodle_url('/mod/zoom2/report.php', ['id' => $cm->id]));
         echo $OUTPUT->footer();
         exit();
     }
@@ -92,17 +92,17 @@ if (!empty($export)) {
         get_string('idnumber'),
         get_string('name'),
         get_string('email'),
-        get_string('jointime', 'mod_zoom'),
-        get_string('leavetime', 'mod_zoom'),
-        get_string('duration', 'mod_zoom'),
+        get_string('jointime', 'mod_zoom2'),
+        get_string('leavetime', 'mod_zoom2'),
+        get_string('duration', 'mod_zoom2'),
     ];
 } else {
     $table->head = [
         get_string('idnumber'),
         get_string('name'),
-        get_string('jointime', 'mod_zoom'),
-        get_string('leavetime', 'mod_zoom'),
-        get_string('duration', 'mod_zoom'),
+        get_string('jointime', 'mod_zoom2'),
+        get_string('leavetime', 'mod_zoom2'),
+        get_string('duration', 'mod_zoom2'),
     ];
 }
 
@@ -161,20 +161,20 @@ foreach ($participants as $p) {
 if ($export != 'xls') {
     echo html_writer::table($table);
 
-    $exporturl = new moodle_url('/mod/zoom/participants.php', [
+    $exporturl = new moodle_url('/mod/zoom2/participants.php', [
         'id' => $cm->id,
         'uuid' => $uuid,
         'export' => 'xls',
     ]);
     $xlsstring = get_string('application/vnd.ms-excel', 'mimetypes');
     $xlsicon = html_writer::img($OUTPUT->image_url('f/spreadsheet'), $xlsstring, ['title' => $xlsstring]);
-    echo get_string('export', 'mod_zoom') . ': ' . html_writer::link($exporturl, $xlsicon);
+    echo get_string('export', 'mod_zoom2') . ': ' . html_writer::link($exporturl, $xlsicon);
 
     echo $OUTPUT->footer();
 } else {
     require_once($CFG->libdir . '/excellib.class.php');
 
-    $workbook = new MoodleExcelWorkbook("zoom_participants_{$zoom->meeting_id}");
+    $workbook = new MoodleExcelWorkbook("zoom2_participants_{$zoom2->meeting_id}");
     $worksheet = $workbook->add_worksheet($strtitle);
     $boldformat = $workbook->add_format();
     $boldformat->set_bold(true);

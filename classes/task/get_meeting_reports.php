@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,17 +17,17 @@
 /**
  * Task: get_meeting_reports
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2018 UC Regents
  * @author     Kubilay Agi
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_zoom\task;
+namespace mod_zoom2\task;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/zoom/locallib.php');
+require_once($CFG->dirroot . '/mod/zoom2/locallib.php');
 
 /**
  * Scheduled task to get the meeting participants for each .
@@ -46,9 +46,9 @@ class get_meeting_reports extends \core\task\scheduled_task {
     public $debuggingenabled = false;
 
     /**
-     * The mod_zoom_webservice instance used to query for data. Can be stubbed
+     * The mod_zoom2_webservice instance used to query for data. Can be stubbed
      * for unit testing.
-     * @var mod_zoom_webservice
+     * @var mod_zoom2_webservice
      */
     public $service = null;
 
@@ -84,14 +84,14 @@ class get_meeting_reports extends \core\task\scheduled_task {
         }
 
         try {
-            $this->service = zoom_webservice();
+            $this->service = zoom2_webservice();
         } catch (\moodle_exception $exception) {
             mtrace('Skipping task - ', $exception->getMessage());
             return;
         }
 
         // See if we cannot make anymore API calls.
-        $retryafter = get_config('zoom', 'retry-after');
+        $retryafter = get_config('zoom2', 'retry-after');
         if (!empty($retryafter) && time() < $retryafter) {
             mtrace('Out of API calls, retry after ' . userdate($retryafter,
                     get_string('strftimedaydatetime', 'core_langconfig')));
@@ -100,14 +100,14 @@ class get_meeting_reports extends \core\task\scheduled_task {
 
         $this->debuggingenabled = debugging();
 
-        $starttime = get_config('zoom', 'last_call_made_at');
+        $starttime = get_config('zoom2', 'last_call_made_at');
         if (empty($starttime)) {
-            // Zoom only provides data from 30 days ago.
+            // Zoom2 only provides data from 30 days ago.
             $starttime = strtotime('-30 days');
         }
 
-        // Zoom requires this format when passing the to and from arguments.
-        // Zoom just returns all the meetings from the day range instead of
+        // Zoom2 requires this format when passing the to and from arguments.
+        // Zoom2 just returns all the meetings from the day range instead of
         // actual time range specified.
         if (!empty($paramend)) {
             $end = $paramend;
@@ -167,7 +167,7 @@ class get_meeting_reports extends \core\task\scheduled_task {
                     // unrecoverable error. Try to pick up where we left off.
                     if ($runningastask) {
                         // Only want to resume if we were processing all reports.
-                        set_config('last_call_made_at', $meetingtime - 1, 'zoom');
+                        set_config('last_call_made_at', $meetingtime - 1, 'zoom2');
                     }
 
                     $recordedallmeetings = false;
@@ -179,14 +179,14 @@ class get_meeting_reports extends \core\task\scheduled_task {
                 // Some unknown error, need to handle it so we can record
                 // where we left off.
                 if ($runningastask) {
-                    set_config('last_call_made_at', $meetingtime - 1, 'zoom');
+                    set_config('last_call_made_at', $meetingtime - 1, 'zoom2');
                 }
             }
         }
 
         if ($recordedallmeetings && $runningastask) {
             // All finished, so save the time that we set end time for the initial query.
-            set_config('last_call_made_at', $endtime, 'zoom');
+            set_config('last_call_made_at', $endtime, 'zoom2');
         }
     }
 
@@ -194,7 +194,7 @@ class get_meeting_reports extends \core\task\scheduled_task {
      * Formats participants array as a record for the database.
      *
      * @param stdClass $participant Unformatted array received from web service API call.
-     * @param int $detailsid The id to link to the zoom_meeting_details table.
+     * @param int $detailsid The id to link to the zoom2_meeting_details table.
      * @param array $names Array that contains mappings of user's moodle ID to the user's name.
      * @param array $emails Array that contains mappings of user's moodle ID to the user's email.
      * @return array Formatted array that is ready to be inserted into the database table.
@@ -210,8 +210,8 @@ class get_meeting_reports extends \core\task\scheduled_task {
 
         // Try to see if we successfully queried for this user and found a Moodle id before.
         if (!empty($participant->id)) {
-            // Sometimes uuid is blank from Zoom.
-            $participantmatches = $DB->get_records('zoom_meeting_participants',
+            // Sometimes uuid is blank from Zoom2.
+            $participantmatches = $DB->get_records('zoom2_meeting_participants',
                     ['uuid' => $participant->id], null, 'id, userid, name');
 
             if (!empty($participantmatches)) {
@@ -247,7 +247,7 @@ class get_meeting_reports extends \core\task\scheduled_task {
 //                // Found name by using fuzzy text search.
 //                $name = $names[$moodleuserid];
             } else {
-                // Did not find any matches, so use what is given by Zoom.
+                // Did not find any matches, so use what is given by Zoom2.
                 $name = $participant->name;
                 $moodleuserid = null;
             }
@@ -265,7 +265,7 @@ class get_meeting_reports extends \core\task\scheduled_task {
             'name' => $name,
             'userid' => $moodleuserid,
             'detailsid' => $detailsid,
-            'zoomuserid' => $participant->user_id,
+            'zoom2userid' => $participant->user_id,
             'uuid' => $participant->id,
             'user_email' => $participant->user_email,
             'join_time' => strtotime($participant->join_time),
@@ -289,7 +289,7 @@ class get_meeting_reports extends \core\task\scheduled_task {
         foreach ($enrolled as $user) {
             $name = strtoupper(fullname($user));
             $names[$user->id] = $name;
-            $emails[$user->id] = strtoupper(zoom_get_api_identifier($user));
+            $emails[$user->id] = strtoupper(zoom2_get_api_identifier($user));
         }
 
         return [$names, $emails];
@@ -326,7 +326,7 @@ class get_meeting_reports extends \core\task\scheduled_task {
         }
 
         $allmeetings = [];
-        $localhosts = $DB->get_records_menu('zoom', null, '', 'id, host_id');
+        $localhosts = $DB->get_records_menu('zoom2', null, '', 'id, host_id');
 
         mtrace("Processing " . count($activehostsuuids) . " active host uuids");
 
@@ -338,14 +338,14 @@ class get_meeting_reports extends \core\task\scheduled_task {
                 $this->debugmsg('Getting meetings for host uuid ' . $activehostsuuid);
                 try {
                     $usersmeetings = $this->service->get_user_report($activehostsuuid, $start, $end);
-                } catch (\zoom_not_found_exception $e) {
-                    // Zoom API returned user not found for a user it said had,
+                } catch (\zoom2_not_found_exception $e) {
+                    // Zoom2 API returned user not found for a user it said had,
                     // meetings. Have to skip user.
-                    $this->debugmsg("Skipping $activehostsuuid because user does not exist on Zoom");
+                    $this->debugmsg("Skipping $activehostsuuid because user does not exist on Zoom2");
                     continue;
-                } catch (\zoom_api_retry_failed_exception $e) {
+                } catch (\zoom2_api_retry_failed_exception $e) {
                     // Hit API limit, so cannot continue.
-                    mtrace($ex->response . ': ' . $ex->zoomerrorcode);
+                    mtrace($ex->response . ': ' . $ex->zoom2errorcode);
                     return;
                 }
             } else {
@@ -386,7 +386,7 @@ class get_meeting_reports extends \core\task\scheduled_task {
      * @return string
      */
     public function get_name() {
-        return get_string('getmeetingreports', 'mod_zoom');
+        return get_string('getmeetingreports', 'mod_zoom2');
     }
 
     /**
@@ -462,15 +462,15 @@ class get_meeting_reports extends \core\task\scheduled_task {
         $this->debugmsg(sprintf('Processing meeting %s|%s that occurred at %s',
                 $meeting->meeting_id, $meeting->uuid, $meeting->start_time));
 
-        // If meeting doesn't exist in the zoom database, the instance is
+        // If meeting doesn't exist in the zoom2 database, the instance is
         // deleted, and we don't need reports for these.
-        if (!($zoomrecord = $DB->get_record('zoom',
+        if (!($zoom2record = $DB->get_record('zoom2',
                 ['meeting_id' => $meeting->meeting_id], '*', IGNORE_MULTIPLE))) {
             mtrace('Meeting does not exist locally; skipping');
             return true;
         }
 
-        $meeting->zoomid = $zoomrecord->id;
+        $meeting->zoom2id = $zoom2record->id;
 
         $timePieces = explode(':', $meeting->duration);
 
@@ -488,33 +488,33 @@ class get_meeting_reports extends \core\task\scheduled_task {
         $meeting->duration = $totalDuration;
 
         // Insert or update meeting details.
-        if (!($DB->record_exists('zoom_meeting_details', ['uuid' => $meeting->uuid]))) {
-            $this->debugmsg('Inserting zoom_meeting_details');
-            $detailsid = $DB->insert_record('zoom_meeting_details', $meeting);
+        if (!($DB->record_exists('zoom2_meeting_details', ['uuid' => $meeting->uuid]))) {
+            $this->debugmsg('Inserting zoom2_meeting_details');
+            $detailsid = $DB->insert_record('zoom2_meeting_details', $meeting);
         } else {
             // Details entry already exists, so update it.
-            $this->debugmsg('Updating zoom_meeting_details');
-            $detailsid = $DB->get_field('zoom_meeting_details', 'id', ['uuid' => $meeting->uuid]);
+            $this->debugmsg('Updating zoom2_meeting_details');
+            $detailsid = $DB->get_field('zoom2_meeting_details', 'id', ['uuid' => $meeting->uuid]);
             $meeting->id = $detailsid;
-            $DB->update_record('zoom_meeting_details', $meeting);
+            $DB->update_record('zoom2_meeting_details', $meeting);
         }
 
         try {
-            $participants = $this->service->get_meeting_participants($meeting->uuid, $zoomrecord->webinar);
-        } catch (\zoom_not_found_exception $e) {
+            $participants = $this->service->get_meeting_participants($meeting->uuid, $zoom2record->webinar);
+        } catch (\zoom2_not_found_exception $e) {
             mtrace(sprintf('Warning: Cannot find meeting %s|%s; skipping',
                     $meeting->meeting_id, $meeting->uuid));
             return true;    // Not really a show stopping error.
-        } catch (\zoom_api_retry_failed_exception $e) {
-            mtrace($e->response . ': ' . $e->zoomerrorcode);
+        } catch (\zoom2_api_retry_failed_exception $e) {
+            mtrace($e->response . ': ' . $e->zoom2errorcode);
             return false;
-        } catch (\zoom_api_limit_exception $e) {
-            mtrace($e->response . ': ' . $e->zoomerrorcode);
+        } catch (\zoom2_api_limit_exception $e) {
+            mtrace($e->response . ': ' . $e->zoom2errorcode);
             return false;
         }
 
         // Loop through each user to generate name->uids mapping.
-        list($names, $emails) = $this->get_enrollments($zoomrecord->course);
+        list($names, $emails) = $this->get_enrollments($zoom2record->course);
 
         $this->debugmsg(sprintf('Processing %d participants', count($participants)));
 
@@ -524,24 +524,24 @@ class get_meeting_reports extends \core\task\scheduled_task {
         try {
             $transaction = $DB->start_delegated_transaction();
 
-            $count = $DB->count_records('zoom_meeting_participants', ['detailsid' => $detailsid]);
+            $count = $DB->count_records('zoom2_meeting_participants', ['detailsid' => $detailsid]);
             if (!empty($count)) {
                 $this->debugmsg(sprintf('Dropping previous records of %d participants', $count));
-                $DB->delete_records('zoom_meeting_participants', ['detailsid' => $detailsid]);
+                $DB->delete_records('zoom2_meeting_participants', ['detailsid' => $detailsid]);
             }
 
             foreach ($participants as $rawparticipant) {
                 $this->debugmsg(sprintf('Working on %s (user_id: %d, uuid: %s)',
                         $rawparticipant->name, $rawparticipant->user_id, $rawparticipant->id));
                 $participant = $this->format_participant($rawparticipant, $detailsid, $names, $emails);
-                $recordid = $DB->insert_record('zoom_meeting_participants', $participant, true);
+                $recordid = $DB->insert_record('zoom2_meeting_participants', $participant, true);
                 $this->debugmsg('Inserted record ' . $recordid);
             }
 
             $transaction->allow_commit();
         } catch (\dml_exception $exception) {
             $transaction->rollback($exception);
-            mtrace('ERROR: Cannot insert zoom_meeting_participants: ' .
+            mtrace('ERROR: Cannot insert zoom2_meeting_participants: ' .
                     $exception->getMessage());
             return false;
         }
@@ -561,7 +561,7 @@ class get_meeting_reports extends \core\task\scheduled_task {
     public function normalize_meeting($meeting) {
         $normalizedmeeting = new \stdClass();
 
-        // Returned meeting object will not be using Zoom's id, because it is a
+        // Returned meeting object will not be using Zoom2's id, because it is a
         // primary key in our own tables.
         $normalizedmeeting->meeting_id = $meeting->id;
 

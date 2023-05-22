@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_zoom\privacy;
+namespace mod_zoom2\privacy;
 
 use context_module;
 use core_privacy\local\metadata\collection;
@@ -23,20 +23,20 @@ use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\deletion_criteria;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
-use mod_zoom\privacy\provider;
+use mod_zoom2\privacy\provider;
 
 /**
  * Privacy provider tests class.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2022 Catalyst IT Australia Pty Ltd
  * @author     2022 Ghaly Marc-Alexandre <marc-alexandreghaly@catalyst-ca.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_zoom\privacy\provider
+ * @coversDefaultClass \mod_zoom2\privacy\provider
  */
-class mod_zoom_provider_test extends \core_privacy\tests\provider_testcase {
-    /** @var object The zoom instance object. */
-    protected $zoominstance;
+class mod_zoom2_provider_test extends \core_privacy\tests\provider_testcase {
+    /** @var object The zoom2 instance object. */
+    protected $zoom2instance;
 
     /** @var object The course object. */
     protected $course;
@@ -62,14 +62,14 @@ class mod_zoom_provider_test extends \core_privacy\tests\provider_testcase {
         $course = $generator->create_course();
         $params = [
             'course' => $course->id,
-            'name' => 'First Zoom Activity',
+            'name' => 'First zoom2 Activity',
             'showpreview' => 0,
         ];
 
-        $plugingenerator = $generator->get_plugin_generator('mod_zoom');
-        // The zoom activity.
-        $zoom = $plugingenerator->create_instance($params);
-        // Create a student enrolled in zoom activity.
+        $plugingenerator = $generator->get_plugin_generator('mod_zoom2');
+        // The zoom2 activity.
+        $zoom2 = $plugingenerator->create_instance($params);
+        // Create a student enrolled in zoom2 activity.
         $student = $generator->create_user();
         $student2 = $generator->create_user();
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
@@ -85,12 +85,12 @@ class mod_zoom_provider_test extends \core_privacy\tests\provider_testcase {
             'uuid' => 'someuuid',
             'duration' => 60,
             'participants' => 3,
-            'zoomid' => $zoom->id,
+            'zoom2id' => $zoom2->id,
         ];
 
-        $zmid = $DB->insert_record('zoom_meeting_details', $meeting, true);
+        $zmid = $DB->insert_record('zoom2_meeting_details', $meeting, true);
         $participant = (object) [
-            'zoomuserid' => 9999,
+            'zoom2userid' => 9999,
             'userid' => $student->id,
             'join_time' => 1646769061,
             'leave_time' => 1646769062,
@@ -99,7 +99,7 @@ class mod_zoom_provider_test extends \core_privacy\tests\provider_testcase {
             'detailsid' => $zmid,
         ];
         $participant2 = (object) [
-            'zoomuserid' => 9999,
+            'zoom2userid' => 9999,
             'userid' => $student2->id,
             'join_time' => 1646769061,
             'leave_time' => 1646769062,
@@ -107,19 +107,19 @@ class mod_zoom_provider_test extends \core_privacy\tests\provider_testcase {
             'name' => 'John',
             'detailsid' => $zmid,
         ];
-        $zmparticipantsid = $DB->insert_record('zoom_meeting_participants', $participant, true);
-        $zmparticipantsid2 = $DB->insert_record('zoom_meeting_participants', $participant2, true);
+        $zmparticipantsid = $DB->insert_record('zoom2_meeting_participants', $participant, true);
+        $zmparticipantsid2 = $DB->insert_record('zoom2_meeting_participants', $participant2, true);
         $meetingrecording = (object) [
-            'zoomid' => $zoom->id,
+            'zoom2id' => $zoom2->id,
             'meetinguuid' => 'meetinguuid',
-            'zoomrecordingid' => 'zoomrecordingid',
-            'name' => 'a zoom recording name',
+            'zoom2recordingid' => 'zoom2recordingid',
+            'name' => 'a zoom2 recording name',
             'externalurl' => 'www.dummyurl.com',
             'recordingtype' => 'recordingtype',
             'recordingstart' => 1646769061,
             'showrecording' => 1,
         ];
-        $meetingrecordingid = $DB->insert_record('zoom_meeting_recordings', $meetingrecording, true);
+        $meetingrecordingid = $DB->insert_record('zoom2_meeting_recordings', $meetingrecording, true);
         $meetingrecordingsview = (object) [
             'recordingsid' => $meetingrecordingid,
             'userid' => $student->id,
@@ -130,12 +130,12 @@ class mod_zoom_provider_test extends \core_privacy\tests\provider_testcase {
             'userid' => $student2->id,
             'viewed' => 1,
         ];
-        $DB->insert_record('zoom_meeting_recordings_view', $meetingrecordingsview, true);
-        $DB->insert_record('zoom_meeting_recordings_view', $meetingrecordingsview2, true);
+        $DB->insert_record('zoom2_meeting_recordings_view', $meetingrecordingsview, true);
+        $DB->insert_record('zoom2_meeting_recordings_view', $meetingrecordingsview2, true);
 
-        $cm = get_coursemodule_from_instance('zoom', $zoom->id);
+        $cm = get_coursemodule_from_instance('zoom2', $zoom2->id);
 
-        $this->zoominstance = $zoom;
+        $this->zoom2instance = $zoom2;
         $this->course = $course;
         $this->student = $student;
         $this->student2 = $student2;
@@ -147,7 +147,7 @@ class mod_zoom_provider_test extends \core_privacy\tests\provider_testcase {
      * @covers ::get_metadata
      */
     public function test_get_metadata() {
-        $collection = new collection('mod_zoom');
+        $collection = new collection('mod_zoom2');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();
 
@@ -156,10 +156,10 @@ class mod_zoom_provider_test extends \core_privacy\tests\provider_testcase {
         $table2 = $itemcollection[1];
         $table3 = $itemcollection[2];
         $table4 = $itemcollection[3];
-        $this->assertEquals('zoom_meeting_participants', $table->get_name());
-        $this->assertEquals('zoom_meeting_details', $table2->get_name());
-        $this->assertEquals('zoom_meeting_recordings_view', $table3->get_name());
-        $this->assertEquals('zoom_breakout_participants', $table4->get_name());
+        $this->assertEquals('zoom2_meeting_participants', $table->get_name());
+        $this->assertEquals('zoom2_meeting_details', $table2->get_name());
+        $this->assertEquals('zoom2_meeting_recordings_view', $table3->get_name());
+        $this->assertEquals('zoom2_breakout_participants', $table4->get_name());
 
         $privacyfields1 = $table->get_privacy_fields();
         $this->assertArrayHasKey('name', $privacyfields1);
@@ -168,22 +168,22 @@ class mod_zoom_provider_test extends \core_privacy\tests\provider_testcase {
         $this->assertArrayHasKey('leave_time', $privacyfields1);
         $this->assertArrayHasKey('duration', $privacyfields1);
 
-        $this->assertEquals('privacy:metadata:zoom_meeting_participants', $table->get_summary());
+        $this->assertEquals('privacy:metadata:zoom2_meeting_participants', $table->get_summary());
 
         $privacyfields2 = $table2->get_privacy_fields();
         $this->assertArrayHasKey('topic', $privacyfields2);
 
-        $this->assertEquals('privacy:metadata:zoom_meeting_details', $table2->get_summary());
+        $this->assertEquals('privacy:metadata:zoom2_meeting_details', $table2->get_summary());
 
         $privacyfields3 = $table3->get_privacy_fields();
         $this->assertArrayHasKey('userid', $privacyfields3);
 
-        $this->assertEquals('privacy:metadata:zoom_meeting_view', $table3->get_summary());
+        $this->assertEquals('privacy:metadata:zoom2_meeting_view', $table3->get_summary());
 
         $privacyfields4 = $table4->get_privacy_fields();
         $this->assertArrayHasKey('userid', $privacyfields4);
 
-        $this->assertEquals('privacy:metadata:zoom_breakout_participants', $table4->get_summary());
+        $this->assertEquals('privacy:metadata:zoom2_breakout_participants', $table4->get_summary());
     }
 
     /**
@@ -211,7 +211,7 @@ class mod_zoom_provider_test extends \core_privacy\tests\provider_testcase {
     public function test_get_users_in_context() {
         $cmcontext = context_module::instance($this->cm->id);
 
-        $userlist = new userlist($cmcontext, 'mod_zoom');
+        $userlist = new userlist($cmcontext, 'mod_zoom2');
         provider::get_users_in_context($userlist);
 
         $this->assertEquals([$this->student->id, $this->student2->id], $userlist->get_userids());
@@ -225,7 +225,7 @@ class mod_zoom_provider_test extends \core_privacy\tests\provider_testcase {
         $cmcontext = context_module::instance($this->cm->id);
 
         // Export all of the data for the context.
-        $this->export_context_data_for_user($this->student->id, $cmcontext, 'mod_zoom');
+        $this->export_context_data_for_user($this->student->id, $cmcontext, 'mod_zoom2');
         $writer = writer::with_context($cmcontext);
         $this->assertTrue($writer->has_any_data());
     }
@@ -237,32 +237,32 @@ class mod_zoom_provider_test extends \core_privacy\tests\provider_testcase {
     public function test_delete_data_for_all_users_in_context() {
         global $DB;
 
-        $zoommeetingcount = $DB->count_records('zoom_meeting_details');
-        $this->assertEquals(1, $zoommeetingcount);
+        $zoom2meetingcount = $DB->count_records('zoom2_meeting_details');
+        $this->assertEquals(1, $zoom2meetingcount);
 
-        $zmparticipants = $DB->count_records('zoom_meeting_participants');
+        $zmparticipants = $DB->count_records('zoom2_meeting_participants');
         $this->assertEquals(2, $zmparticipants);
 
-        $zmrecordingcount = $DB->count_records('zoom_meeting_recordings');
+        $zmrecordingcount = $DB->count_records('zoom2_meeting_recordings');
         $this->assertEquals(1, $zmrecordingcount);
 
-        $zmrecordingviewcount = $DB->count_records('zoom_meeting_recordings_view');
+        $zmrecordingviewcount = $DB->count_records('zoom2_meeting_recordings_view');
         $this->assertEquals(2, $zmrecordingviewcount);
 
         // Delete data based on context.
         $cmcontext = context_module::instance($this->cm->id);
         provider::delete_data_for_all_users_in_context($cmcontext);
 
-        $newzoommeetingcount = $DB->count_records('zoom_meeting_details');
-        $this->assertEquals(0, $newzoommeetingcount);
+        $newzoom2meetingcount = $DB->count_records('zoom2_meeting_details');
+        $this->assertEquals(0, $newzoom2meetingcount);
 
-        $newzmparticipants = $DB->count_records('zoom_meeting_participants');
+        $newzmparticipants = $DB->count_records('zoom2_meeting_participants');
         $this->assertEquals(0, $newzmparticipants);
 
-        $newzmrecordingcount = $DB->count_records('zoom_meeting_recordings');
+        $newzmrecordingcount = $DB->count_records('zoom2_meeting_recordings');
         $this->assertEquals(0, $newzmrecordingcount);
 
-        $newzmrecordingviewcount = $DB->count_records('zoom_meeting_recordings_view');
+        $newzmrecordingviewcount = $DB->count_records('zoom2_meeting_recordings_view');
         $this->assertEquals(0, $newzmrecordingviewcount);
     }
 
@@ -273,21 +273,21 @@ class mod_zoom_provider_test extends \core_privacy\tests\provider_testcase {
     public function test_delete_data_for_user() {
         global $DB;
 
-        $zmparticipants = $DB->count_records('zoom_meeting_participants');
+        $zmparticipants = $DB->count_records('zoom2_meeting_participants');
         $this->assertEquals(2, $zmparticipants);
 
-        $zmrecordingviewcount = $DB->count_records('zoom_meeting_recordings_view');
+        $zmrecordingviewcount = $DB->count_records('zoom2_meeting_recordings_view');
         $this->assertEquals(2, $zmrecordingviewcount);
         // Delete data based on specific context.
         $context = context_module::instance($this->cm->id);
-        $contextlist = new approved_contextlist($this->student, 'mod_zoom', [$context->id]);
+        $contextlist = new approved_contextlist($this->student, 'mod_zoom2', [$context->id]);
 
         provider::delete_data_for_user($contextlist);
 
-        $newzmparticipants = $DB->count_records('zoom_meeting_participants');
+        $newzmparticipants = $DB->count_records('zoom2_meeting_participants');
         $this->assertEquals(1, $newzmparticipants);
 
-        $newzmrecordingviewcount = $DB->count_records('zoom_meeting_recordings_view');
+        $newzmrecordingviewcount = $DB->count_records('zoom2_meeting_recordings_view');
         $this->assertEquals(1, $newzmrecordingviewcount);
     }
 
@@ -298,21 +298,21 @@ class mod_zoom_provider_test extends \core_privacy\tests\provider_testcase {
     public function test_delete_data_for_users() {
         global $DB;
 
-        $zmparticipants = $DB->count_records('zoom_meeting_participants');
+        $zmparticipants = $DB->count_records('zoom2_meeting_participants');
         $this->assertEquals(2, $zmparticipants);
 
-        $zmrecordingviewcount = $DB->count_records('zoom_meeting_recordings_view');
+        $zmrecordingviewcount = $DB->count_records('zoom2_meeting_recordings_view');
         $this->assertEquals(2, $zmrecordingviewcount);
         // Delete data based on specific context.
         $context = context_module::instance($this->cm->id);
-        $approveduserlist = new approved_userlist($context, 'zoom',
+        $approveduserlist = new approved_userlist($context, 'zoom2',
                 [$this->student->id, $this->student2->id]);
         provider::delete_data_for_users($approveduserlist);
 
-        $newzmparticipants = $DB->count_records('zoom_meeting_participants');
+        $newzmparticipants = $DB->count_records('zoom2_meeting_participants');
         $this->assertEquals(0, $newzmparticipants);
 
-        $newzmrecordingviewcount = $DB->count_records('zoom_meeting_recordings_view');
+        $newzmrecordingviewcount = $DB->count_records('zoom2_meeting_recordings_view');
         $this->assertEquals(0, $newzmrecordingviewcount);
     }
 }

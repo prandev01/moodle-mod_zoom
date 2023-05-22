@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 
 
 /**
- * English strings for zoom.
+ * English strings for zoom2.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2015 UC Regents
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -70,8 +70,8 @@ $string['autorecording_userdefault'] = 'Use default Zoom user settings';
 $string['autorecordingoptionsupdate'] = 'Update auto recording options';
 $string['breakoutrooms'] = 'Breakout rooms';
 $string['cachedef_oauth'] = 'Zoom OAuth token cache';
-$string['cachedef_zoomid'] = 'Zoom user id mappings';
-$string['cachedef_zoommeetingsecurity'] = 'Zoom meeting security settings, including meeting password requirements of the account';
+$string['cachedef_zoom2id'] = 'Zoom user id mappings';
+$string['cachedef_zoom2meetingsecurity'] = 'Zoom meeting security settings, including meeting password requirements of the account';
 $string['calendardescriptionURL'] = 'Meeting join URL: {$a}.';
 $string['calendardescriptionintro'] = "\nDescription:\n{\$a}";
 $string['calendariconalt'] = 'Calendar icon';
@@ -189,7 +189,7 @@ $string['lowlicenses'] = 'If the number of your licenses exceeds those required,
 $string['maskparticipantdata'] = 'Mask participant data';
 $string['maskparticipantdata_help'] = 'Prevents participant data from appearing in reports (useful for sites that mask participant data, e.g., for HIPAA).';
 $string['media'] = 'Media';
-$string['meeting_nonexistent_on_zoom'] = 'Nonexistent on Zoom';
+$string['meeting_nonexistent_on_zoom2'] = 'Nonexistent on Zoom';
 $string['meeting_invite'] = 'Phone/Dial-In info';
 $string['meeting_invite_show'] = 'Show meeting invitation';
 $string['meeting_invite_hide'] = 'Hide meeting invitation';
@@ -202,15 +202,15 @@ $string['meetingcapacitywarning_desc'] = 'With this setting, you can show a warn
 $string['meetingcapacitywarning_disable'] = 'Disable meeting capacity warning';
 $string['meetingcapacitywarning_enable'] = 'Enable meeting capacity warning';
 $string['meetingcapacitywarningheading'] = 'Meeting capacity warning:';
-$string['meetingcapacitywarningbodyrealhost'] = 'Your Zoom license has a capacity of <strong><a href="{$a->zoomprofileurl}" target="_blank">{$a->meetingcapacity} meeting participants</a></strong>, but this course has <strong><a href="{$a->courseparticipantsurl}">{$a->eligiblemeetingparticipants} enrolled and active participants</a></strong>.';
+$string['meetingcapacitywarningbodyrealhost'] = 'Your Zoom license has a capacity of <strong><a href="{$a->zoom2profileurl}" target="_blank">{$a->meetingcapacity} meeting participants</a></strong>, but this course has <strong><a href="{$a->courseparticipantsurl}">{$a->eligiblemeetingparticipants} enrolled and active participants</a></strong>.';
 $string['meetingcapacitywarningbodyalthost'] = 'The Zoom license of this meeting\'s host, {$a->hostname}, has a capacity of <strong>{$a->meetingcapacity} meeting participants</strong>, but this course has <strong><a href="{$a->courseparticipantsurl}">{$a->eligiblemeetingparticipants} enrolled and active participants</a></strong>.';
 $string['meetingcapacitywarningcontactrealhost'] = 'Please turn to the Zoom account owner to obtain a larger Zoom license if all of these course participants need to join the meeting.';
 $string['meetingcapacitywarningcontactalthost'] = 'Please ask the host to turn to the Zoom account owner to obtain a larger Zoom license if all of these course participants need to join the meeting.';
 $string['meetingparticipantsdeleted'] = 'Meeting participant user data deleted.';
 $string['meetingrecordingviewsdeleted'] = 'Meeting recording user view data deleted.';
-$string['modulename'] = 'Zoom meeting';
-$string['modulenameplural'] = 'Zoom Meetings';
-$string['modulename_help'] = 'Zoom is a video and web conferencing platform that gives authorized users the ability to host online meetings.';
+$string['modulename'] = 'Zoom2 meeting';
+$string['modulenameplural'] = 'Zoom2 Meetings';
+$string['modulename_help'] = 'Zoom2 is a video and web conferencing platform that gives authorized users the ability to host online meetings.';
 $string['month'] = 'Month(s)';
 $string['month_day_text'] = 'of the month';
 $string['nextoccurrence'] = 'Next occurrence';
@@ -221,8 +221,8 @@ $string['noparticipants'] = 'No participants found for this session at this time
 $string['norecordings'] = 'No recordings found for this meeting at this time.';
 $string['norooms'] = 'No Rooms';
 $string['nosessions'] = 'No sessions found for specified range.';
-$string['nozooms'] = 'No meetings';
-$string['nozoomsfound'] = 'No meetings found for the given course.';
+$string['nozoom2s'] = 'No meetings';
+$string['nozoom2sfound'] = 'No meetings found for the given course.';
 $string['occurson'] = 'Occurs On';
 $string['off'] = 'Off';
 $string['oldmeetings'] = 'Concluded Meetings';
@@ -268,19 +268,19 @@ $string['password_only_numeric'] = 'Passcode may only contain numbers and no oth
 $string['password_special'] = 'Passcode must have at least 1 special character (@-_*).';
 $string['passwordprotected'] = 'Passcode Protected';
 $string['pluginadministration'] = 'Manage Zoom meeting';
-$string['pluginname'] = 'Zoom meeting';
-$string['privacy:metadata:zoom_breakout_participants'] = 'The database table to store a list of zoom meeting breakout rooms participants';
-$string['privacy:metadata:zoom_breakout_participants:userid'] = 'The id of the participant user';
-$string['privacy:metadata:zoom_meeting_details'] = 'The database table that stores information about each meeting instance.';
-$string['privacy:metadata:zoom_meeting_details:topic'] = 'The name of the meeting that the user attended.';
-$string['privacy:metadata:zoom_meeting_participants'] = 'The database table that stores information about meeting participants.';
-$string['privacy:metadata:zoom_meeting_participants:duration'] = 'How long the participant was in the meeting';
-$string['privacy:metadata:zoom_meeting_participants:join_time'] = 'The time that the participant joined the meeting';
-$string['privacy:metadata:zoom_meeting_participants:leave_time'] = 'The time that the participant left the meeting';
-$string['privacy:metadata:zoom_meeting_participants:name'] = 'The name of the participant';
-$string['privacy:metadata:zoom_meeting_participants:user_email'] = 'The email of the participant';
-$string['privacy:metadata:zoom_meeting_view'] = 'The database table to track users that view the meeting recordings';
-$string['privacy:metadata:zoom_meeting_view:userid'] = 'The id of the user that viewed the recording';
+$string['pluginname'] = 'Zoom2 meeting';
+$string['privacy:metadata:zoom2_breakout_participants'] = 'The database table to store a list of zoom meeting breakout rooms participants';
+$string['privacy:metadata:zoom2_breakout_participants:userid'] = 'The id of the participant user';
+$string['privacy:metadata:zoom2_meeting_details'] = 'The database table that stores information about each meeting instance.';
+$string['privacy:metadata:zoom2_meeting_details:topic'] = 'The name of the meeting that the user attended.';
+$string['privacy:metadata:zoom2_meeting_participants'] = 'The database table that stores information about meeting participants.';
+$string['privacy:metadata:zoom2_meeting_participants:duration'] = 'How long the participant was in the meeting';
+$string['privacy:metadata:zoom2_meeting_participants:join_time'] = 'The time that the participant joined the meeting';
+$string['privacy:metadata:zoom2_meeting_participants:leave_time'] = 'The time that the participant left the meeting';
+$string['privacy:metadata:zoom2_meeting_participants:name'] = 'The name of the participant';
+$string['privacy:metadata:zoom2_meeting_participants:user_email'] = 'The email of the participant';
+$string['privacy:metadata:zoom2_meeting_view'] = 'The database table to track users that view the meeting recordings';
+$string['privacy:metadata:zoom2_meeting_view:userid'] = 'The id of the user that viewed the recording';
 $string['recording'] = 'Recording';
 $string['recordingadd'] = 'Add Recording';
 $string['recordingdate'] = 'Recording Date';
@@ -324,7 +324,7 @@ $string['reportapicalls'] = 'Report API calls exhausted';
 $string['requirepasscode'] = 'Require meeting passcode';
 $string['requirepasscode_help'] = 'Enabling this option will require that the host sets a passcode for the meeting. Joining participants will be required to input this before joining the meeting. Participants who enter the meeting from within the Moodle activity do not need to input this passcode.';
 $string['resetapicalls'] = 'Reset the number of available API calls';
-$string['resetzoomsall'] = 'Delete all user grades, recording user view data, and meeting participant user data.';
+$string['resetzoom2sall'] = 'Delete all user grades, recording user view data, and meeting participant user data.';
 $string['room'] = 'Room';
 $string['rooms'] = 'Rooms';
 $string['roomname'] = 'Room name';
@@ -386,33 +386,33 @@ $string['webinar_showonlyiflicense'] = 'Show webinar option only if the user has
 $string['webinar_alwaysshow'] = 'Always show webinar option regardless if the user has a license to host webinars';
 $string['webinar_by_default'] = 'Webinar by default';
 $string['webinar_by_default_desc'] = 'Create Zoom instance as a webinar by default.';
-$string['zoom:addinstance'] = 'Add a new Zoom meeting';
+$string['zoom2:addinstance'] = 'Add a new Zoom meeting';
 $string['week'] = 'Week(s)';
 $string['weekoption_first'] = 'First';
 $string['weekoption_fourth'] = 'Fourth';
 $string['weekoption_last'] = 'Last';
 $string['weekoption_second'] = 'Second';
 $string['weekoption_third'] = 'Third';
-$string['zoomerr'] = 'An error occured with Zoom.'; // Generic error.
-$string['zoomerr_apilimit'] = 'Reached the maximum daily rate limit for this API. Retry at {$a}';
-$string['zoomerr_field_missing'] = '{$a} not found';
-$string['zoomerr_id_missing'] = 'You must specify a course_module ID or an instance ID';
-$string['zoomerr_licensesnumber_missing'] = 'Zoom utmost setting found but, licensesnumber setting not found';
-$string['zoomerr_maxretries'] = 'Retried {$a->maxretries} times to make the call, but failed: {$a->response}';
-$string['zoomerr_meetingnotfound'] = 'This meeting cannot be found on Zoom. You can <a href="{$a->recreate}">recreate it here</a> or <a href="{$a->delete}">delete it completely</a>.';
-$string['zoomerr_meetingnotfound_info'] = 'This meeting cannot be found on Zoom. Please contact the meeting host if you have questions.';
-$string['zoomerr_no_access_token'] = 'No access token returned';
-$string['zoomerr_scopes'] = 'The Zoom OAuth configuration is missing these required scopes: {$a}';
-$string['zoomerr_usernotfound'] = 'Unable to find your account on Zoom. If you are using Zoom for the first time, you must activate your Zoom account by logging into <a href="{$a}" target="_blank">{$a}</a>. Once you\'ve activated your Zoom account, reload this page and continue setting up your meeting. Else make sure your email on Zoom matches your email on this system.';
-$string['zoomerr_alternativehostusernotfound'] = 'User {$a} was not found on Zoom.';
-$string['zoomerr_viewrecordings_off'] = 'View Recordings is switched off, task cannot run';
-$string['zoomurl'] = 'Zoom home page URL';
-$string['zoomurl_desc'] = '';
-$string['zoom:eligiblealternativehost'] = 'Selectable as alternative host within Zoom meetings';
-$string['zoom:refreshsessions'] = 'Refresh Zoom meeting reports';
-$string['zoom:view'] = 'View Zoom meetings';
-$string['zoom:viewdialin'] = 'View Zoom dial-in information';
-$string['zoom:viewjoinurl'] = 'View Zoom join url';
+$string['zoom2err'] = 'An error occured with Zoom.'; // Generic error.
+$string['zoom2err_apilimit'] = 'Reached the maximum daily rate limit for this API. Retry at {$a}';
+$string['zoom2err_field_missing'] = '{$a} not found';
+$string['zoom2err_id_missing'] = 'You must specify a course_module ID or an instance ID';
+$string['zoom2err_licensesnumber_missing'] = 'Zoom utmost setting found but, licensesnumber setting not found';
+$string['zoom2err_maxretries'] = 'Retried {$a->maxretries} times to make the call, but failed: {$a->response}';
+$string['zoom2err_meetingnotfound'] = 'This meeting cannot be found on Zoom. You can <a href="{$a->recreate}">recreate it here</a> or <a href="{$a->delete}">delete it completely</a>.';
+$string['zoom2err_meetingnotfound_info'] = 'This meeting cannot be found on Zoom. Please contact the meeting host if you have questions.';
+$string['zoom2err_no_access_token'] = 'No access token returned';
+$string['zoom2err_scopes'] = 'The Zoom OAuth configuration is missing these required scopes: {$a}';
+$string['zoom2err_usernotfound'] = 'Unable to find your account on Zoom. If you are using Zoom for the first time, you must activate your Zoom account by logging into <a href="{$a}" target="_blank">{$a}</a>. Once you\'ve activated your Zoom account, reload this page and continue setting up your meeting. Else make sure your email on Zoom matches your email on this system.';
+$string['zoom2err_alternativehostusernotfound'] = 'User {$a} was not found on Zoom.';
+$string['zoom2err_viewrecordings_off'] = 'View Recordings is switched off, task cannot run';
+$string['zoom2url'] = 'Zoom home page URL';
+$string['zoom2url_desc'] = '';
+$string['zoom2:eligiblealternativehost'] = 'Selectable as alternative host within Zoom meetings';
+$string['zoom2:refreshsessions'] = 'Refresh Zoom meeting reports';
+$string['zoom2:view'] = 'View Zoom meetings';
+$string['zoom2:viewdialin'] = 'View Zoom dial-in information';
+$string['zoom2:viewjoinurl'] = 'View Zoom join url';
 
 $string['detailed_report'] = "Detailed Report";
 $string['show_detailed_report'] = "Show Detailed Report";

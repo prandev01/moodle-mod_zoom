@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * List all zoom meetings.
+ * List all zoom2 meetings.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2015 UC Regents
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,31 +34,31 @@ $course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
 require_course_login($course);
 
 $context = context_course::instance($course->id);
-require_capability('mod/zoom:view', $context);
-$iszoommanager = has_capability('mod/zoom:addinstance', $context);
+require_capability('mod/zoom2:view', $context);
+$iszoom2manager = has_capability('mod/zoom2:addinstance', $context);
 
 $params = [
     'context' => $context,
 ];
-$event = \mod_zoom\event\course_module_instance_list_viewed::create($params);
+$event = \mod_zoom2\event\course_module_instance_list_viewed::create($params);
 $event->add_record_snapshot('course', $course);
 $event->trigger();
 
-$strname = get_string('modulenameplural', 'mod_zoom');
-$strnew = get_string('newmeetings', 'mod_zoom');
-$strold = get_string('oldmeetings', 'mod_zoom');
+$strname = get_string('modulenameplural', 'mod_zoom2');
+$strnew = get_string('newmeetings', 'mod_zoom2');
+$strold = get_string('oldmeetings', 'mod_zoom2');
 
-$strtitle = get_string('title', 'mod_zoom');
-$strwebinar = get_string('webinar', 'mod_zoom');
-$strtime = get_string('meeting_time', 'mod_zoom');
-$strduration = get_string('duration', 'mod_zoom');
-$stractions = get_string('actions', 'mod_zoom');
-$strsessions = get_string('sessions', 'mod_zoom');
+$strtitle = get_string('title', 'mod_zoom2');
+$strwebinar = get_string('webinar', 'mod_zoom2');
+$strtime = get_string('meeting_time', 'mod_zoom2');
+$strduration = get_string('duration', 'mod_zoom2');
+$stractions = get_string('actions', 'mod_zoom2');
+$strsessions = get_string('sessions', 'mod_zoom2');
 
-$strmeetingstarted = get_string('meeting_started', 'mod_zoom');
-$strjoin = get_string('join', 'mod_zoom');
+$strmeetingstarted = get_string('meeting_started', 'mod_zoom2');
+$strjoin = get_string('join', 'mod_zoom2');
 
-$PAGE->set_url('/mod/zoom/index.php', ['id' => $id]);
+$PAGE->set_url('/mod/zoom2/index.php', ['id' => $id]);
 $PAGE->navbar->add($strname);
 $PAGE->set_title("$course->shortname: $strname");
 $PAGE->set_heading($course->fullname);
@@ -70,13 +70,13 @@ if ($CFG->branch < '400') {
     echo $OUTPUT->heading($strname);
 }
 
-if (! $zooms = get_all_instances_in_course('zoom', $course)) {
-    notice(get_string('nozooms', 'mod_zoom'), new moodle_url('/course/view.php', ['id' => $course->id]));
+if (! $zoom2s = get_all_instances_in_course('zoom2', $course)) {
+    notice(get_string('nozoom2s', 'mod_zoom2'), new moodle_url('/course/view.php', ['id' => $course->id]));
 }
 
 $usesections = course_format_uses_sections($course->format);
 
-$zoomuserid = zoom_get_user_id(false);
+$zoom2userid = zoom2_get_user_id(false);
 
 $newtable = new html_table();
 $newtable->attributes['class'] = 'generaltable mod_index';
@@ -96,8 +96,8 @@ if ($usesections) {
     array_unshift($oldalign, 'center');
 }
 
-// Show sessions column only if user can edit Zoom meetings.
-if ($iszoommanager) {
+// Show sessions column only if user can edit Zoom2 meetings.
+if ($iszoom2manager) {
     $newhead[] = $strsessions;
     $newalign[] = 'left';
     $oldhead[] = $strsessions;
@@ -111,10 +111,10 @@ $oldtable->align = $oldalign;
 
 $now = time();
 $modinfo = get_fast_modinfo($course);
-$cms = $modinfo->instances['zoom'];
-foreach ($zooms as $z) {
+$cms = $modinfo->instances['zoom2'];
+foreach ($zoom2s as $z) {
     $row = [];
-    list($inprogress, $available, $finished) = zoom_get_state($z);
+    list($inprogress, $available, $finished) = zoom2_get_state($z);
 
     $cm = $cms[$z->id];
     if ($usesections && isset($cm->sectionnum)) {
@@ -128,17 +128,17 @@ foreach ($zooms as $z) {
     }
 
     // Get start time column information.
-    if ($z->recurring && $z->recurrence_type == ZOOM_RECURRINGTYPE_NOTIME) {
-        $displaytime = get_string('recurringmeeting', 'mod_zoom');
+    if ($z->recurring && $z->recurrence_type == ZOOM2_RECURRINGTYPE_NOTIME) {
+        $displaytime = get_string('recurringmeeting', 'mod_zoom2');
         $displaytime .= html_writer::empty_tag('br');
-        $displaytime .= get_string('recurringmeetingexplanation', 'mod_zoom');
-    } else if ($z->recurring && $z->recurrence_type != ZOOM_RECURRINGTYPE_NOTIME) {
-        $displaytime = get_string('recurringmeeting', 'mod_zoom');
+        $displaytime .= get_string('recurringmeetingexplanation', 'mod_zoom2');
+    } else if ($z->recurring && $z->recurrence_type != ZOOM2_RECURRINGTYPE_NOTIME) {
+        $displaytime = get_string('recurringmeeting', 'mod_zoom2');
         $displaytime .= html_writer::empty_tag('br');
-        if (($nextoccurrence = zoom_get_next_occurrence($z)) > 0) {
-            $displaytime .= get_string('nextoccurrence', 'mod_zoom') . ': ' . userdate($nextoccurrence);
+        if (($nextoccurrence = zoom2_get_next_occurrence($z)) > 0) {
+            $displaytime .= get_string('nextoccurrence', 'mod_zoom2') . ': ' . userdate($nextoccurrence);
         } else {
-            $displaytime .= get_string('nooccurrenceleft', 'mod_zoom');
+            $displaytime .= get_string('nooccurrenceleft', 'mod_zoom2');
         }
     } else {
         $displaytime = userdate($z->start_time);
@@ -149,31 +149,31 @@ foreach ($zooms as $z) {
 
     if ($finished) {
         $row[2] = $displaytime;
-        if ($iszoommanager) {
+        if ($iszoom2manager) {
             $row[3] = $sessions;
         }
 
         $oldtable->data[] = $row;
     } else {
         if ($inprogress) {
-            $label = html_writer::tag('span', $strmeetingstarted, ['class' => 'label label-info zoom-info']);
+            $label = html_writer::tag('span', $strmeetingstarted, ['class' => 'label label-info zoom2-info']);
             $row[2] = html_writer::tag('div', $label);
         } else {
             $row[2] = $displaytime;
         }
 
-        $row[3] = ($z->recurring && $z->recurrence_type == ZOOM_RECURRINGTYPE_NOTIME) ? '--' : format_time($z->duration);
+        $row[3] = ($z->recurring && $z->recurrence_type == ZOOM2_RECURRINGTYPE_NOTIME) ? '--' : format_time($z->duration);
 
         if ($available) {
             $buttonhtml = html_writer::tag('button', $strjoin, ['type' => 'submit', 'class' => 'btn btn-primary']);
-            $aurl = new moodle_url('/mod/zoom/loadmeeting.php', ['id' => $cm->id]);
+            $aurl = new moodle_url('/mod/zoom2/loadmeeting.php', ['id' => $cm->id]);
             $buttonhtml .= html_writer::input_hidden_params($aurl);
             $row[4] = html_writer::tag('form', $buttonhtml, ['action' => $aurl->out_omit_querystring(), 'target' => '_blank']);
         } else {
             $row[4] = '--';
         }
 
-        if ($iszoommanager) {
+        if ($iszoom2manager) {
             $row[] = $sessions;
         }
 
@@ -183,16 +183,16 @@ foreach ($zooms as $z) {
 
 echo $OUTPUT->heading($strnew, 4);
 echo html_writer::table($newtable);
-echo $OUTPUT->heading($strold, 4, null, 'mod-zoom-old-meetings-header');
+echo $OUTPUT->heading($strold, 4, null, 'mod-zoom2-old-meetings-header');
 // Show refresh meeting sessions link only if user can run the 'refresh session reports' console command.
-if (has_capability('mod/zoom:refreshsessions', $context)) {
+if (has_capability('mod/zoom2:refreshsessions', $context)) {
     $linkarguments = [
         'courseid' => $id,
         'start' => date('Y-m-d', strtotime('-3 days')),
         'end' => date('Y-m-d'),
     ];
-    $url = new moodle_url($CFG->wwwroot . '/mod/zoom/console/get_meeting_report.php', $linkarguments);
-    echo html_writer::link($url, get_string('refreshreports', 'mod_zoom'), ['target' => '_blank', 'class' => 'pl-4']);
+    $url = new moodle_url($CFG->wwwroot . '/mod/zoom2/console/get_meeting_report.php', $linkarguments);
+    echo html_writer::link($url, get_string('refreshreports', 'mod_zoom2'), ['target' => '_blank', 'class' => 'pl-4']);
 }
 
 echo html_writer::table($oldtable);

@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Definition of Zoom scheduled tasks.
+ * Definition of Zoom2 scheduled tasks.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2015 UC Regents
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 
 $tasks = [
     [
-        'classname' => 'mod_zoom\task\update_meetings',
+        'classname' => 'mod_zoom2\task\update_meetings',
         'blocking' => 0,
         'minute' => '30',
         'hour' => '4',
@@ -35,7 +35,7 @@ $tasks = [
         'dayofweek' => '*',
     ],
     [
-        'classname' => 'mod_zoom\task\get_meeting_reports',
+        'classname' => 'mod_zoom2\task\get_meeting_reports',
         'blocking' => 0,
         'minute' => '0',
         'hour' => '*/6',
@@ -44,7 +44,7 @@ $tasks = [
         'month' => '*',
     ],
     [
-        'classname' => 'mod_zoom\task\update_tracking_fields',
+        'classname' => 'mod_zoom2\task\update_tracking_fields',
         'blocking' => 0,
         'minute' => '0',
         'hour' => '*/6',
@@ -53,7 +53,7 @@ $tasks = [
         'month' => '*',
     ],
     [
-        'classname' => 'mod_zoom\task\get_meeting_recordings',
+        'classname' => 'mod_zoom2\task\get_meeting_recordings',
         'blocking' => 0,
         'minute' => '0',
         'hour' => '*/3',
@@ -62,7 +62,7 @@ $tasks = [
         'month' => '*',
     ],
     [
-        'classname' => 'mod_zoom\task\delete_meeting_recordings',
+        'classname' => 'mod_zoom2\task\delete_meeting_recordings',
         'blocking' => 0,
         'minute' => '0',
         'hour' => '0',

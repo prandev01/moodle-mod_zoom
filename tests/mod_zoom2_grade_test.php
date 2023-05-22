@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,28 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for supporting advanced password requirements in Zoom.
+ * Unit tests for supporting advanced password requirements in Zoom2.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2020 UC Regents
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_zoom;
+namespace mod_zoom2;
 
 use advanced_testcase;
 
 /**
  * PHPunit testcase class.
  */
-class mod_zoom_grade_test extends advanced_testcase {
+class mod_zoom2_grade_test extends advanced_testcase {
     /**
      * Setup to ensure that fixtures are loaded.
      */
     public static function setUpBeforeClass(): void {
         global $CFG;
-        require_once($CFG->dirroot . '/mod/zoom/lib.php');
-        require_once($CFG->dirroot . '/mod/zoom/locallib.php');
+        require_once($CFG->dirroot . '/mod/zoom2/lib.php');
+        require_once($CFG->dirroot . '/mod/zoom2/locallib.php');
     }
 
     /**
@@ -49,36 +49,36 @@ class mod_zoom_grade_test extends advanced_testcase {
         $this->course = $this->getDataGenerator()->create_course();
         $this->teacher = $this->getDataGenerator()->create_and_enrol($this->course, 'teacher');
         $this->student = $this->getDataGenerator()->create_and_enrol($this->course, 'student');
-        $this->generator = $this->getDataGenerator()->get_plugin_generator('mod_zoom');
+        $this->generator = $this->getDataGenerator()->get_plugin_generator('mod_zoom2');
     }
 
     /**
-     * Tests that Zoom grades can be added and updated in the gradebook.
-     * @covers ::zoom_grade_item_update
+     * Tests that Zoom2 grades can be added and updated in the gradebook.
+     * @covers ::zoom2_grade_item_update
      */
     public function test_grade_added() {
         $params['course'] = $this->course->id;
         $params['grade'] = 100;
 
         $instance = $this->generator->create_instance($params);
-        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom', $instance->id);
+        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom2', $instance->id);
 
         // Gradebook should be empty.
         $this->assertEquals(0, count($gradebook->items[0]->grades));
 
         // Insert grade for student.
         $studentgrade = ['userid' => $this->student->id, 'rawgrade' => 50];
-        zoom_grade_item_update($instance, $studentgrade);
+        zoom2_grade_item_update($instance, $studentgrade);
 
         // Gradebook should contain a grade for student.
-        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom', $instance->id, $this->student->id);
+        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom2', $instance->id, $this->student->id);
         $this->assertEquals(1, count($gradebook->items[0]->grades));
         $this->assertEquals(50, $gradebook->items[0]->grades[$this->student->id]->grade);
 
         // Update grade for student.
         $studentgrade = ['userid' => $this->student->id, 'rawgrade' => 75];
-        zoom_grade_item_update($instance, $studentgrade);
-        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom', $instance->id, $this->student->id);
+        zoom2_grade_item_update($instance, $studentgrade);
+        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom2', $instance->id, $this->student->id);
 
         // Verify grade has been updated.
         $this->assertEquals(1, count($gradebook->items[0]->grades));
@@ -86,61 +86,61 @@ class mod_zoom_grade_test extends advanced_testcase {
     }
 
     /**
-     * Tests that the Zoom grade type cannot be changed to NONE if grades are already inputted.
-     * @covers ::zoom_grade_item_update
+     * Tests that the Zoom2 grade type cannot be changed to NONE if grades are already inputted.
+     * @covers ::zoom2_grade_item_update
      */
     public function test_grade_type_not_none() {
         $params['course'] = $this->course->id;
         $params['grade'] = 100;
 
         $instance = $this->generator->create_instance($params);
-        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom', $instance->id);
+        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom2', $instance->id);
 
         // Gradebook should be empty.
         $this->assertEquals(0, count($gradebook->items[0]->grades));
 
         // Insert grade for student.
         $studentgrade = ['userid' => $this->student->id, 'rawgrade' => 100];
-        zoom_grade_item_update($instance, $studentgrade);
+        zoom2_grade_item_update($instance, $studentgrade);
 
         // Gradebook should contain a grade for student.
-        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom', $instance->id, $this->student->id);
+        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom2', $instance->id, $this->student->id);
         $this->assertEquals(1, count($gradebook->items[0]->grades));
 
         // Try to change grade type to NONE.
         $instance->grade = 0;
-        zoom_grade_item_update($instance);
-        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom', $instance->id);
+        zoom2_grade_item_update($instance);
+        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom2', $instance->id);
 
         // Verify grade type is not changed.
         $this->assertEquals(100, $gradebook->items[0]->grademax);
     }
 
     /**
-     * Tests that the Zoom grades can be deleted.
-     * @covers ::zoom_grade_item_delete
+     * Tests that the Zoom2 grades can be deleted.
+     * @covers ::zoom2_grade_item_delete
      */
     public function test_grade_delete() {
         $params['course'] = $this->course->id;
         $params['grade'] = 100;
 
         $instance = $this->generator->create_instance($params);
-        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom', $instance->id);
+        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom2', $instance->id);
 
         // Gradebook should be empty.
         $this->assertEquals(0, count($gradebook->items[0]->grades));
 
         // Insert grade for student.
         $studentgrade = ['userid' => $this->student->id, 'rawgrade' => 100];
-        zoom_grade_item_update($instance, $studentgrade);
+        zoom2_grade_item_update($instance, $studentgrade);
 
         // Gradebook should contain a grade for student.
-        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom', $instance->id, $this->student->id);
+        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom2', $instance->id, $this->student->id);
         $this->assertEquals(1, count($gradebook->items[0]->grades));
 
         // Delete the grade items.
-        zoom_grade_item_delete($instance);
-        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom', $instance->id);
+        zoom2_grade_item_delete($instance);
+        $gradebook = grade_get_grades($this->course->id, 'mod', 'zoom2', $instance->id);
 
         // Verify gradebook is empty.
         $this->assertEmpty($gradebook->items);

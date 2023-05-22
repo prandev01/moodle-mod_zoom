@@ -17,12 +17,12 @@
 /**
  * Social breadth indicator.
  *
- * @package   mod_zoom
+ * @package   mod_zoom2
  * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_zoom\analytics\indicator;
+namespace mod_zoom2\analytics\indicator;
 
 /**
  * Social breadth indicator.
@@ -36,7 +36,7 @@ class social_breadth extends activity_base {
      * @return object
      */
     public static function get_name(): \lang_string {
-        return new \lang_string('indicator:socialbreadth', 'mod_zoom');
+        return new \lang_string('indicator:socialbreadth', 'mod_zoom2');
     }
 
     /**

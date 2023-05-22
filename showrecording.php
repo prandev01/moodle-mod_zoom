@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Load zoom meeting recording and add a record of the view.
+ * Load zoom2 meeting recording and add a record of the view.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2020 Nick Stefanski <nmstefanski@gmail.com>
  * @author     2021 Jwalit Shah <jwalitshah@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,27 +31,27 @@ $meetinguuid = required_param('meetinguuid', PARAM_TEXT);
 $recordingstart = required_param('recordingstart', PARAM_INT);
 $showrecording = required_param('showrecording', PARAM_INT);
 
-if (!get_config('zoom', 'viewrecordings')) {
-    throw new moodle_exception('recordingnotvisible', 'mod_zoom', get_string('recordingnotvisible', 'zoom'));
+if (!get_config('zoom2', 'viewrecordings')) {
+    throw new moodle_exception('recordingnotvisible', 'mod_zoom2', get_string('recordingnotvisible', 'zoom2'));
 }
 
-list($course, $cm, $zoom) = zoom_get_instance_setup();
+list($course, $cm, $zoom2) = zoom2_get_instance_setup();
 require_login($course, true, $cm);
 
 $context = context_module::instance($cm->id);
 $PAGE->set_context($context);
-require_capability('mod/zoom:addinstance', $context);
+require_capability('mod/zoom2:addinstance', $context);
 
 $urlparams = ['id' => $cm->id];
-$url = new moodle_url('/mod/zoom/recordings.php', $urlparams);
+$url = new moodle_url('/mod/zoom2/recordings.php', $urlparams);
 if (!confirm_sesskey()) {
-    redirect($url, get_string('sesskeyinvalid', 'mod_zoom'));
+    redirect($url, get_string('sesskeyinvalid', 'mod_zoom2'));
 }
 
 // Find the video recording and audio only recording pair that matches the criteria.
-$recordings = $DB->get_records('zoom_meeting_recordings', ['meetinguuid' => $meetinguuid, 'recordingstart' => $recordingstart]);
+$recordings = $DB->get_records('zoom2_meeting_recordings', ['meetinguuid' => $meetinguuid, 'recordingstart' => $recordingstart]);
 if (empty($recordings)) {
-    throw new moodle_exception('recordingnotfound', 'mod_zoom', '', get_string('recordingnotfound', 'zoom'));
+    throw new moodle_exception('recordingnotfound', 'mod_zoom2', '', get_string('recordingnotfound', 'zoom2'));
 }
 
 $now = time();
@@ -61,7 +61,7 @@ if ($showrecording === 1 || $showrecording === 0) {
     foreach ($recordings as $rec) {
         $rec->showrecording = $showrecording;
         $rec->timemodified = $now;
-        $DB->update_record('zoom_meeting_recordings', $rec);
+        $DB->update_record('zoom2_meeting_recordings', $rec);
     }
 }
 

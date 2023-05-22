@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,31 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for error handling for zoom exceptions.
+ * Unit tests for error handling for zoom2 exceptions.
  *
- * @package    mod_zoom
+ * @package    mod_zoom2
  * @copyright  2019 UC Regents
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_zoom;
+namespace mod_zoom2;
 
 use basic_testcase;
-use zoom_not_found_exception;
+use zoom2_not_found_exception;
 
 /**
  * PHPunit testcase class.
  */
 class error_handling_test extends basic_testcase {
     /**
-     * Exception for when the meeting isn't found on Zoom.
-     * @var zoom_not_found_exception
+     * Exception for when the meeting isn't found on Zoom2.
+     * @var zoom2_not_found_exception
      */
     private $meetingnotfoundexception;
 
     /**
-     * Exception for when the user isn't found on Zoom.
-     * @var zoom_not_found_exception
+     * Exception for when the user isn't found on Zoom2.
+     * @var zoom2_not_found_exception
      */
     private $usernotfoundexception;
 
@@ -47,13 +47,13 @@ class error_handling_test extends basic_testcase {
      * Exception for when the user is found in the system but they haven't
      * accepted their invite, so they don't have permissions to do what was
      * requested.
-     * @var zoom_not_found_exception
+     * @var zoom2_not_found_exception
      */
     private $invaliduserexception;
 
     /**
-     * Exception for when the meeting isn't found on Zoom.
-     * @var zoom_not_found_exception
+     * Exception for when the meeting isn't found on Zoom2.
+     * @var zoom2_not_found_exception
      */
     private $othererrorcodeexception;
 
@@ -62,35 +62,35 @@ class error_handling_test extends basic_testcase {
      */
     public static function setUpBeforeClass(): void {
         global $CFG;
-        require_once($CFG->dirroot . '/mod/zoom/locallib.php');
+        require_once($CFG->dirroot . '/mod/zoom2/locallib.php');
     }
 
     /**
      * Setup before every test.
      */
     public function setUp(): void {
-        $this->meetingnotfoundexception = new zoom_not_found_exception('meeting not found', 3001);
-        $this->usernotfoundexception = new zoom_not_found_exception('user not found', 1001);
-        $this->invaliduserexception = new zoom_not_found_exception('invalid user found', 1120);
-        $this->othererrorcodeexception = new zoom_not_found_exception('other exception', -1);
+        $this->meetingnotfoundexception = new zoom2_not_found_exception('meeting not found', 3001);
+        $this->usernotfoundexception = new zoom2_not_found_exception('user not found', 1001);
+        $this->invaliduserexception = new zoom2_not_found_exception('invalid user found', 1120);
+        $this->othererrorcodeexception = new zoom2_not_found_exception('other exception', -1);
     }
 
     /**
      * Tests that uuid are encoded properly for use in web service calls.
-     * @covers ::zoom_is_meeting_gone_error
-     * @covers ::zoom_is_user_not_found_error
+     * @covers ::zoom2_is_meeting_gone_error
+     * @covers ::zoom2_is_user_not_found_error
      */
     public function test_correct_error_recognition() {
         // Check meeting not found behavior.
-        $this->assertTrue(zoom_is_meeting_gone_error($this->meetingnotfoundexception));
-        $this->assertTrue(zoom_is_meeting_gone_error($this->usernotfoundexception));
-        $this->assertTrue(zoom_is_meeting_gone_error($this->invaliduserexception));
-        $this->assertFalse(zoom_is_meeting_gone_error($this->othererrorcodeexception));
+        $this->assertTrue(zoom2_is_meeting_gone_error($this->meetingnotfoundexception));
+        $this->assertTrue(zoom2_is_meeting_gone_error($this->usernotfoundexception));
+        $this->assertTrue(zoom2_is_meeting_gone_error($this->invaliduserexception));
+        $this->assertFalse(zoom2_is_meeting_gone_error($this->othererrorcodeexception));
 
         // Check user not found behavior.
-        $this->assertTrue(zoom_is_user_not_found_error($this->usernotfoundexception));
-        $this->assertTrue(zoom_is_user_not_found_error($this->invaliduserexception));
-        $this->assertFalse(zoom_is_user_not_found_error($this->meetingnotfoundexception));
-        $this->assertFalse(zoom_is_user_not_found_error($this->othererrorcodeexception));
+        $this->assertTrue(zoom2_is_user_not_found_error($this->usernotfoundexception));
+        $this->assertTrue(zoom2_is_user_not_found_error($this->invaliduserexception));
+        $this->assertFalse(zoom2_is_user_not_found_error($this->meetingnotfoundexception));
+        $this->assertFalse(zoom2_is_user_not_found_error($this->othererrorcodeexception));
     }
 }

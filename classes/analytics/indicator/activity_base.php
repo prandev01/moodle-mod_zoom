@@ -17,12 +17,12 @@
 /**
  * Activity base class.
  *
- * @package   mod_zoom
+ * @package   mod_zoom2
  * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_zoom\analytics\indicator;
+namespace mod_zoom2\analytics\indicator;
 
 /**
  * Activity base class.

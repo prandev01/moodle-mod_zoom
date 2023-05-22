@@ -1,5 +1,5 @@
 <?php
-// This file is part of the Zoom plugin for Moodle - http://moodle.org/
+// This file is part of the Zoom2 plugin for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines backup_zoom_activity_task class
+ * Defines backup_zoom2_activity_task class
  *
- * @package   mod_zoom
+ * @package   mod_zoom2
  * @category  backup
  * @copyright 2015 UC Regents
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,12 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot . '/mod/zoom/backup/moodle2/backup_zoom_stepslib.php');
+require_once($CFG->dirroot . '/mod/zoom2/backup/moodle2/backup_zoom2_stepslib.php');
 
 /**
- * Provides the steps to perform one complete backup of the zoom instance
+ * Provides the steps to perform one complete backup of the zoom2 instance
  */
-class backup_zoom_activity_task extends backup_activity_task {
+class backup_zoom2_activity_task extends backup_activity_task {
     /**
      * No specific settings for this activity
      */
@@ -38,10 +38,10 @@ class backup_zoom_activity_task extends backup_activity_task {
     }
 
     /**
-     * Defines a backup step to store the instance data in the zoom.xml file
+     * Defines a backup step to store the instance data in the zoom2.xml file
      */
     protected function define_my_steps() {
-        $this->add_step(new backup_zoom_activity_structure_step('zoom_structure', 'zoom.xml'));
+        $this->add_step(new backup_zoom2_activity_structure_step('zoom2_structure', 'zoom2.xml'));
     }
 
     /**
@@ -55,13 +55,13 @@ class backup_zoom_activity_task extends backup_activity_task {
 
         $base = preg_quote($CFG->wwwroot, '/');
 
-        // Link to the list of zooms.
-        $search = '/(' . $base . '\/mod\/zoom\/index.php\?id\=)([0-9]+)/';
-        $content = preg_replace($search, '$@ZOOMINDEX*$2@$', $content);
+        // Link to the list of zoom2s.
+        $search = '/(' . $base . '\/mod\/zoom2\/index.php\?id\=)([0-9]+)/';
+        $content = preg_replace($search, '$@ZOOM2INDEX*$2@$', $content);
 
-        // Link to zoom view by moduleid.
-        $search = '/(' . $base . '\/mod\/zoom\/view.php\?id\=)([0-9]+)/';
-        $content = preg_replace($search, '$@ZOOMVIEWBYID*$2@$', $content);
+        // Link to zoom2 view by moduleid.
+        $search = '/(' . $base . '\/mod\/zoom2\/view.php\?id\=)([0-9]+)/';
+        $content = preg_replace($search, '$@ZOOM2VIEWBYID*$2@$', $content);
 
         return $content;
     }
