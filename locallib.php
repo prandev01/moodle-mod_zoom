@@ -1185,7 +1185,7 @@ function zoom2_sync_meeting_tracking_fields($zoom2id, $trackingfields) {
         $tfvalues[$field] = $trackingfield->value;
     }
 
-    $tfrows = $DB->get_records('zoom2_meeting_tracking_fields', ['meeting_id' => $zoom2id]);
+    $tfrows = $DB->get_records('zoom2_meeting_track_fields', ['meeting_id' => $zoom2id]);
     $tfobjects = [];
     foreach ($tfrows as $tfrow) {
         $tfobjects[$tfrow->tracking_field] = $tfrow;
@@ -1197,17 +1197,17 @@ function zoom2_sync_meeting_tracking_fields($zoom2id, $trackingfields) {
         if (isset($tfobjects[$key])) {
             $tfobject = $tfobjects[$key];
             if ($value === '') {
-                $DB->delete_records('zoom2_meeting_tracking_fields', ['meeting_id' => $zoom2id, 'tracking_field' => $key]);
+                $DB->delete_records('zoom2_meeting_track_fields', ['meeting_id' => $zoom2id, 'tracking_field' => $key]);
             } else if ($tfobject->value !== $value) {
                 $tfobject->value = $value;
-                $DB->update_record('zoom2_meeting_tracking_fields', $tfobject);
+                $DB->update_record('zoom2_meeting_track_fields', $tfobject);
             }
         } else if ($value !== '') {
             $tfobject = new stdClass();
             $tfobject->meeting_id = $zoom2id;
             $tfobject->tracking_field = $key;
             $tfobject->value = $value;
-            $DB->insert_record('zoom2_meeting_tracking_fields', $tfobject);
+            $DB->insert_record('zoom2_meeting_track_fields', $tfobject);
         }
     }
 }

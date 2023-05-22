@@ -57,7 +57,7 @@ class provider implements
                                         ['topic' => 'privacy:metadata:zoom2_meeting_details:topic'],
                                         'privacy:metadata:zoom2_meeting_details');
 
-        $coll->add_database_table('zoom2_meeting_recordings_view',
+        $coll->add_database_table('zoom2_meeting_recording_view',
             ['userid' => 'privacy:metadata:zoom2_meeting_view:userid'],
             'privacy:metadata:zoom2_meeting_view');
 
@@ -87,7 +87,7 @@ class provider implements
             LEFT JOIN {zoom2_meeting_details} zmd ON zmd.zoom2id = z.id
             LEFT JOIN {zoom2_meeting_participants} zmp ON zmp.detailsid = zmd.id
             LEFT JOIN {zoom2_meeting_recordings} zmr ON zmr.zoom2id = z.id
-            LEFT JOIN {zoom2_meeting_recordings_view} zmrv ON zmrv.recordingsid = zmr.id
+            LEFT JOIN {zoom2_meeting_recording_view} zmrv ON zmrv.recordingsid = zmr.id
                  WHERE zmp.userid = :userid1 OR zmrv.userid = :userid2
         ';
 
@@ -131,7 +131,7 @@ class provider implements
         $userlist->add_from_sql('userid', $sql, $params);
 
         $sql = "SELECT zmrv.userid
-                  FROM {zoom2_meeting_recordings_view} zmrv
+                  FROM {zoom2_meeting_recording_view} zmrv
                   JOIN {zoom2_meeting_recordings} zmr ON zmr.id = zmrv.recordingsid
                   JOIN {zoom2} z ON zmr.zoom2id = z.id
                   JOIN {modules} m ON m.name = :modulename
@@ -224,7 +224,7 @@ class provider implements
             INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
             INNER JOIN {zoom2} z ON z.id = cm.instance
             INNER JOIN {zoom2_meeting_recordings} zmr ON zmr.zoom2id = z.id
-            INNER JOIN {zoom2_meeting_recordings_view} zmrv ON zmrv.recordingsid = zmr.id
+            INNER JOIN {zoom2_meeting_recording_view} zmrv ON zmrv.recordingsid = zmr.id
                  WHERE c.id $contextsql
                        AND zmrv.userid = :userid
               ORDER BY cm.id ASC
@@ -278,7 +278,7 @@ class provider implements
 
             $meetingrecordings = $DB->get_records('zoom2_meeting_recordings', ['zoom2id' => $cm->instance]);
             foreach ($meetingrecordings as $recording) {
-                $DB->delete_records('zoom2_meeting_recordings_view', ['recordingsid' => $recording->id]);
+                $DB->delete_records('zoom2_meeting_recording_view', ['recordingsid' => $recording->id]);
             }
 
             $DB->delete_records('zoom2_meeting_recordings', ['zoom2id' => $cm->instance]);
@@ -319,7 +319,7 @@ class provider implements
 
                 $meetingrecordings = $DB->get_records('zoom2_meeting_recordings', ['zoom2id' => $cm->instance]);
                 foreach ($meetingrecordings as $recording) {
-                    $DB->delete_records('zoom2_meeting_recordings_view', ['recordingsid' => $recording->id, 'userid' => $user->id]);
+                    $DB->delete_records('zoom2_meeting_recording_view', ['recordingsid' => $recording->id, 'userid' => $user->id]);
                 }
 
                 $breakoutrooms = $DB->get_records('zoom2_meeting_breakout_rooms', ['zoom2id' => $cm->instance]);
@@ -366,7 +366,7 @@ class provider implements
                   JOIN {context} ctx ON cm.id = ctx.instanceid AND ctx.contextlevel = :modlevel
                  WHERE ctx.id = :contextid";
 
-        $DB->delete_records_select('zoom2_meeting_recordings_view', "userid $insql AND recordingsid IN ($sql)", $params);
+        $DB->delete_records_select('zoom2_meeting_recording_view', "userid $insql AND recordingsid IN ($sql)", $params);
 
         $sql = "SELECT zmbr.id
                   FROM {zoom2_meeting_breakout_rooms} zmbr

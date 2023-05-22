@@ -893,7 +893,7 @@ class mod_zoom2_mod_form extends moodleform_mod {
         if ($config->defaulttrackingfields !== '') {
             // Populate modedit form fields with previously saved values.
             $defaulttrackingfields = zoom2_clean_tracking_fields();
-            $tfrows = $DB->get_records('zoom2_meeting_tracking_fields', ['meeting_id' => $defaultvalues['id']]);
+            $tfrows = $DB->get_records('zoom2_meeting_track_fields', ['meeting_id' => $defaultvalues['id']]);
             foreach ($tfrows as $tfrow) {
                 $tfkey = $tfrow->tracking_field;
                 if (!empty($defaulttrackingfields[$tfkey])) {

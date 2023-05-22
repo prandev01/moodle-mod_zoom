@@ -130,8 +130,8 @@ class mod_zoom2_provider_test extends \core_privacy\tests\provider_testcase {
             'userid' => $student2->id,
             'viewed' => 1,
         ];
-        $DB->insert_record('zoom2_meeting_recordings_view', $meetingrecordingsview, true);
-        $DB->insert_record('zoom2_meeting_recordings_view', $meetingrecordingsview2, true);
+        $DB->insert_record('zoom2_meeting_recording_view', $meetingrecordingsview, true);
+        $DB->insert_record('zoom2_meeting_recording_view', $meetingrecordingsview2, true);
 
         $cm = get_coursemodule_from_instance('zoom2', $zoom2->id);
 
@@ -158,7 +158,7 @@ class mod_zoom2_provider_test extends \core_privacy\tests\provider_testcase {
         $table4 = $itemcollection[3];
         $this->assertEquals('zoom2_meeting_participants', $table->get_name());
         $this->assertEquals('zoom2_meeting_details', $table2->get_name());
-        $this->assertEquals('zoom2_meeting_recordings_view', $table3->get_name());
+        $this->assertEquals('zoom2_meeting_recording_view', $table3->get_name());
         $this->assertEquals('zoom2_breakout_participants', $table4->get_name());
 
         $privacyfields1 = $table->get_privacy_fields();
@@ -246,7 +246,7 @@ class mod_zoom2_provider_test extends \core_privacy\tests\provider_testcase {
         $zmrecordingcount = $DB->count_records('zoom2_meeting_recordings');
         $this->assertEquals(1, $zmrecordingcount);
 
-        $zmrecordingviewcount = $DB->count_records('zoom2_meeting_recordings_view');
+        $zmrecordingviewcount = $DB->count_records('zoom2_meeting_recording_view');
         $this->assertEquals(2, $zmrecordingviewcount);
 
         // Delete data based on context.
@@ -262,7 +262,7 @@ class mod_zoom2_provider_test extends \core_privacy\tests\provider_testcase {
         $newzmrecordingcount = $DB->count_records('zoom2_meeting_recordings');
         $this->assertEquals(0, $newzmrecordingcount);
 
-        $newzmrecordingviewcount = $DB->count_records('zoom2_meeting_recordings_view');
+        $newzmrecordingviewcount = $DB->count_records('zoom2_meeting_recording_view');
         $this->assertEquals(0, $newzmrecordingviewcount);
     }
 
@@ -276,7 +276,7 @@ class mod_zoom2_provider_test extends \core_privacy\tests\provider_testcase {
         $zmparticipants = $DB->count_records('zoom2_meeting_participants');
         $this->assertEquals(2, $zmparticipants);
 
-        $zmrecordingviewcount = $DB->count_records('zoom2_meeting_recordings_view');
+        $zmrecordingviewcount = $DB->count_records('zoom2_meeting_recording_view');
         $this->assertEquals(2, $zmrecordingviewcount);
         // Delete data based on specific context.
         $context = context_module::instance($this->cm->id);
@@ -287,7 +287,7 @@ class mod_zoom2_provider_test extends \core_privacy\tests\provider_testcase {
         $newzmparticipants = $DB->count_records('zoom2_meeting_participants');
         $this->assertEquals(1, $newzmparticipants);
 
-        $newzmrecordingviewcount = $DB->count_records('zoom2_meeting_recordings_view');
+        $newzmrecordingviewcount = $DB->count_records('zoom2_meeting_recording_view');
         $this->assertEquals(1, $newzmrecordingviewcount);
     }
 
@@ -301,7 +301,7 @@ class mod_zoom2_provider_test extends \core_privacy\tests\provider_testcase {
         $zmparticipants = $DB->count_records('zoom2_meeting_participants');
         $this->assertEquals(2, $zmparticipants);
 
-        $zmrecordingviewcount = $DB->count_records('zoom2_meeting_recordings_view');
+        $zmrecordingviewcount = $DB->count_records('zoom2_meeting_recording_view');
         $this->assertEquals(2, $zmrecordingviewcount);
         // Delete data based on specific context.
         $context = context_module::instance($this->cm->id);
@@ -312,7 +312,7 @@ class mod_zoom2_provider_test extends \core_privacy\tests\provider_testcase {
         $newzmparticipants = $DB->count_records('zoom2_meeting_participants');
         $this->assertEquals(0, $newzmparticipants);
 
-        $newzmrecordingviewcount = $DB->count_records('zoom2_meeting_recordings_view');
+        $newzmrecordingviewcount = $DB->count_records('zoom2_meeting_recording_view');
         $this->assertEquals(0, $newzmrecordingviewcount);
     }
 }

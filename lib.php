@@ -394,7 +394,7 @@ function zoom2_delete_instance($id) {
     $DB->delete_records('zoom2_meeting_details', ['zoom2id' => $zoom2->id]);
 
     // Delete tracking field data for deleted meetings.
-    $DB->delete_records('zoom2_meeting_tracking_fields', ['meeting_id' => $zoom2->id]);
+    $DB->delete_records('zoom2_meeting_track_fields', ['meeting_id' => $zoom2->id]);
 
     // Delete any dependent records here.
     zoom2_calendar_item_delete($zoom2);
@@ -857,7 +857,7 @@ function zoom2_reset_userdata($data) {
             'error' => false,
         ];
 
-        $DB->delete_records_select('zoom2_meeting_recordings_view',
+        $DB->delete_records_select('zoom2_meeting_recording_view',
             'recordingsid IN (SELECT zmr.id
                              FROM {zoom2_meeting_recordings} zmr
                              JOIN {zoom2} z ON z.id = zmr.zoom2id
@@ -1035,7 +1035,7 @@ function mod_zoom2_update_tracking_fields() {
         foreach ($oldconfigs as $oldconfig) {
             if (preg_match($pattern, $oldconfig, $matches)) {
                 set_config($oldconfig, null, 'zoom2');
-                $DB->delete_records('zoom2_meeting_tracking_fields', ['tracking_field' => $matches['oldfield']]);
+                $DB->delete_records('zoom2_meeting_track_fields', ['tracking_field' => $matches['oldfield']]);
             }
         }
     } catch (Exception $e) {

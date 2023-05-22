@@ -102,7 +102,7 @@
         <INDEX NAME="uuid" UNIQUE="false" FIELDS="uuid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="zoom2_meeting_tracking_fields" COMMENT="A list of tracking field values for meetings in Zoom2.">
+    <TABLE NAME="zoom2_meeting_track_fields" COMMENT="A list of tracking field values for meetings in Zoom2.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="meeting_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the meeting from the DB table."/>
@@ -137,7 +137,7 @@
         <KEY NAME="zoom2id_foreign" TYPE="foreign" FIELDS="zoom2id" REFTABLE="zoom2" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="zoom2_meeting_recordings_view" COMMENT="A list to track when users view Zoom2 meeting recordings.">
+    <TABLE NAME="zoom2_meeting_recording_view" COMMENT="A list to track when users view Zoom2 meeting recordings.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="This field exists only because Moodle requires us to have a unique 'id' field."/>
         <FIELD NAME="recordingsid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="link to zoom2_meeting_recordings table"/>

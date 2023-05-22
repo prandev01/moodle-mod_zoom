@@ -41,7 +41,7 @@ $PAGE->set_url('/mod/zoom2/recreate.php', ['id' => $cm->id]);
 // in case the meeting's former owner no longer exists on Zoom2.
 $zoom2->host_id = zoom2_get_user_id();
 
-$trackingfields = $DB->get_records('zoom2_meeting_tracking_fields', ['meeting_id' => $zoom2->id]);
+$trackingfields = $DB->get_records('zoom2_meeting_track_fields', ['meeting_id' => $zoom2->id]);
 foreach ($trackingfields as $trackingfield) {
     $field = $trackingfield->tracking_field;
     $zoom2->$field = $trackingfield->value;

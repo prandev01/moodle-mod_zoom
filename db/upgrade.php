@@ -609,23 +609,23 @@ function xmldb_zoom2_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021111100) {
-        // Define table zoom2_meeting_tracking_fields to be created.
-        $table = new xmldb_table('zoom2_meeting_tracking_fields');
+        // Define table zoom2_meeting_track_fields to be created.
+        $table = new xmldb_table('zoom2_meeting_track_fields');
 
-        // Adding fields to table zoom2_meeting_tracking_fields.
+        // Adding fields to table zoom2_meeting_track_fields.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('meeting_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('tracking_field', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
         $table->add_field('value', XMLDB_TYPE_TEXT, null, null, null, null, null);
 
-        // Adding keys to table zoom2_meeting_tracking_fields.
+        // Adding keys to table zoom2_meeting_track_fields.
         $table->add_key('id_primary', XMLDB_KEY_PRIMARY, ['id']);
 
-        // Adding indexes to table zoom2_meeting_tracking_fields.
+        // Adding indexes to table zoom2_meeting_track_fields.
         $table->add_index('meeting_id', XMLDB_INDEX_NOTUNIQUE, ['meeting_id']);
         $table->add_index('tracking_field', XMLDB_INDEX_NOTUNIQUE, ['tracking_field']);
 
-        // Conditionally launch create table for zoom2_meeting_tracking_fields.
+        // Conditionally launch create table for zoom2_meeting_track_fields.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
@@ -661,24 +661,24 @@ function xmldb_zoom2_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        // Define table zoom2_meeting_recordings_view to be created.
-        $table = new xmldb_table('zoom2_meeting_recordings_view');
+        // Define table zoom2_meeting_recording_view to be created.
+        $table = new xmldb_table('zoom2_meeting_recording_view');
 
-        // Adding fields to table zoom2_meeting_recordings_view.
+        // Adding fields to table zoom2_meeting_recording_view.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('recordingsid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('viewed', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '12', null, null, null, null);
 
-        // Adding keys to table zoom2_meeting_recordings_view.
+        // Adding keys to table zoom2_meeting_recording_view.
         $table->add_key('id_primary', XMLDB_KEY_PRIMARY, ['id']);
         $table->add_key('recordingsid_foreign', XMLDB_KEY_FOREIGN, ['recordingsid'], 'zoom2_meeting_recordings', ['id']);
 
-        // Adding indexes to table zoom2_meeting_recordings_view.
+        // Adding indexes to table zoom2_meeting_recording_view.
         $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, ['userid']);
 
-        // Conditionally launch create table for zoom2_meeting_recordings_view.
+        // Conditionally launch create table for zoom2_meeting_recording_view.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }

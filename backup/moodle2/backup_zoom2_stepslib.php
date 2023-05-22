@@ -55,7 +55,7 @@ class backup_zoom2_activity_structure_step extends backup_activity_structure_ste
 
         // Define data sources.
         $zoom2->set_source_table('zoom2', ['id' => backup::VAR_ACTIVITYID]);
-        $trackingfield->set_source_table('zoom2_meeting_tracking_fields', ['meeting_id' => backup::VAR_ACTIVITYID]);
+        $trackingfield->set_source_table('zoom2_meeting_track_fields', ['meeting_id' => backup::VAR_ACTIVITYID]);
 
         // If we were referring to other tables, we would annotate the relation
         // with the element's annotate_ids() method.

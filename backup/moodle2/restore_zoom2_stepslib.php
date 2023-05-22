@@ -107,7 +107,7 @@ class restore_zoom2_activity_structure_step extends restore_activity_structure_s
         $defaulttrackingfields = zoom2_clean_tracking_fields();
 
         if (isset($defaulttrackingfields[$data->tracking_field])) {
-            $newitemid = $DB->insert_record('zoom2_meeting_tracking_fields', $data);
+            $newitemid = $DB->insert_record('zoom2_meeting_track_fields', $data);
             $this->set_mapping('zoom2_tracking_field', $oldid, $newitemid);
         }
     }
